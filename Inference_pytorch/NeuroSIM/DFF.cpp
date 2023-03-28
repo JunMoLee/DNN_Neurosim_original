@@ -176,6 +176,9 @@ void DFF::CalculatePower(double numRead, double numDffPerOperation, bool validat
 		if(validated){
 			readDynamicEnergy *= param->gamma; 	// switching activity of DFF in shifter-add and accumulator, gamma = 0.5 by default
 		}
+
+		// 1.4 update : write energy is equal to read energy
+		writeDynamicEnergy = readDynamicEnergy;
 	}
 }
 

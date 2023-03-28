@@ -83,6 +83,8 @@ void LevelShifter::CalculateArea(double _newHeight, double _newWidth, AreaModify
 		width = 0;
 		
 		double hlow, hlatch, hhigh, wlow, wlatch, whigh;
+
+		// 1.4 update: needs check - compatibility with FinFET?
 		if (param->validated){			
 			CalculateGateArea(INV, 1, widthN*15*2, widthP*20*2, tech.featureSize*MAX_TRANSISTOR_HEIGHT*2.5, tech, &hlow, &wlow); 	//width*2, height*2.5
 			CalculateGateArea(INV, 1, widthN*32*2, widthP*10*2, tech.featureSize*MAX_TRANSISTOR_HEIGHT*2.5, tech, &hlatch, &wlatch);

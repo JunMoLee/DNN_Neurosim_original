@@ -393,30 +393,36 @@ double HTree::GetUnitLengthRes(double wireLength) {
 	}
 	
 	if (wireWidth >= 175) {
-		AR = 1.6; 
-		Rho = 2.20e-8;
-	} else if (110 <= wireWidth < 175) {
-		AR = 1.6; 
-		Rho = 2.52e-8;
-	} else if (105 <= wireWidth < 110) {
-		AR = 1.7; 
-		Rho = 2.68e-8;
-	} else if (80 <= wireWidth < 105) {
-		AR = 1.7; 
-		Rho = 3.31e-8;
-	} else if (56 <= wireWidth < 80) {
-		AR = 1.8; 
-		Rho = 3.70e-8;
-	} else if (40 <= wireWidth < 56) {
-		AR = 1.9; 
-		Rho = 4.03e-8;
-	} else if (25 <= wireWidth < 40) {
-		AR = 2.0; 
-		Rho = 5.08e-8;
-	}else {
-		AR = 2.0;
-		Rho = 6.35e-8;
-	} 
+		AR = 1.6; Rho = 2.01*1e-8;
+	} else if ((110 <= wireWidth) &&  (wireWidth < 175)) {
+		AR = 1.6; Rho = 2.20*1e-8;
+	} else if ((105 <= wireWidth) &&  (wireWidth < 110)) {
+		AR = 1.7; Rho = 2.21*1e-8;
+	} else if ((80 <= wireWidth) &&  (wireWidth < 105)){
+		AR = 1.7; Rho = 2.37*1e-8;
+	} else if ((56 <= wireWidth) &&  (wireWidth < 80)){
+		AR = 1.8; Rho = 2.63*1e-8;
+	} else if ((40 <= wireWidth) &&  (wireWidth < 56)) {
+		AR = 1.9; Rho = 2.97*1e-8;
+	} else if ((26 <= wireWidth) &&  (wireWidth < 40)) {
+		AR = 2.0; Rho = 3.6*1e-8;
+	} else if ((22 <= wireWidth) &&  (wireWidth < 26)){
+		AR = 2.00; Rho = 3.95*1e-8;
+	} else if ((20 <= wireWidth) &&  (wireWidth < 22)){
+		AR = 2.00; Rho = 4.17*1e-8; 
+	} else if ((15 <= wireWidth) &&  (wireWidth < 20)){
+		AR = 2.00; Rho = 4.98*1e-8; 
+	} else if ((12 <= wireWidth) &&  (wireWidth < 15)){
+		AR = 2.00; Rho = 5.8*1e-8; 
+	} else if ((10 <= wireWidth) &&  (wireWidth < 12)){
+		AR = 3.00; Rho = 6.65*1e-8; 
+	} else if ((8 <= wireWidth) &&  (wireWidth < 10)){
+		AR = 3.00; Rho = 7.87*1e-8; 
+	} else {
+		exit(-1); puts("Wire width out of range"); 
+	}
+
+
 	Rho *= (1+0.00451*(param->temp-300));
 	if (wireWidth == -1) {
 		unitLengthWireResistance = 1.0;	// Use a small number to prevent numerical error for NeuroSim

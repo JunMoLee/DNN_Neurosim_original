@@ -426,7 +426,8 @@ void ChipInitialize(InputParameter& inputParameter, Technology& tech, MemCell& c
 			if (param->reLu) {
 				GreLu->Initialize(ceil((double) maxThroughputTile/(double) param->numColMuxed), param->numBitInput, param->clkFreq);
 			} else {
-				Gsigmoid->Initialize(false, param->numBitInput, ceil((double) log2((double) param->numRowSubArray)+(double) param->cellBit-1)+param->numBitInput+param->numColPerSynapse+1+log2((double) maxAddFromSubArray)+ceil((double) log2((double) maxTileAdded)), 
+				// 1.4 update
+				Gsigmoid->Initialize(param->Activationtype, param->numBitInput, ceil((double) log2((double) param->numRowSubArray)+(double) param->cellBit-1)+param->numBitInput+param->numColPerSynapse+1+log2((double) maxAddFromSubArray)+ceil((double) log2((double) maxTileAdded)), 
 										ceil((double) maxThroughputTile/(double) param->numColMuxed), param->clkFreq);
 			}
 		} else {
@@ -445,7 +446,8 @@ void ChipInitialize(InputParameter& inputParameter, Technology& tech, MemCell& c
 			if (param->reLu) {
 				GreLu->Initialize(ceil((double)(desiredTileSizeCM)/(double)param->numColMuxed), param->numBitInput, param->clkFreq);
 			} else {
-				Gsigmoid->Initialize(false, param->numBitInput, ceil((double) log2((double) param->numRowSubArray)+(double) param->cellBit-1)+param->numBitInput+param->numColPerSynapse+1+log2((double) maxAddFromSubArray)+ceil((double) log2((double) maxTileAdded)), 
+				// 1.4 update
+				Gsigmoid->Initialize(param->Activationtype, param->numBitInput, ceil((double) log2((double) param->numRowSubArray)+(double) param->cellBit-1)+param->numBitInput+param->numColPerSynapse+1+log2((double) maxAddFromSubArray)+ceil((double) log2((double) maxTileAdded)), 
 										ceil((double) (desiredTileSizeCM)/(double) param->numColMuxed), param->clkFreq);
 			}
 		}
@@ -627,6 +629,7 @@ double ChipCalculatePerformance(InputParameter& inputParameter, Technology& tech
 		for (int i=0; i<ceil((double) netStructure[l][2]*(double) netStructure[l][3]*(double) netStructure[l][4]*(double) numRowPerSynapse/desiredTileSizeCM); i++) {       // # of tiles in row
 			for (int j=0; j<ceil((double) netStructure[l][5]*(double) numColPerSynapse/(double) desiredTileSizeCM); j++) {   // # of tiles in Column
 				
+				
 				double tileReadLatency = 0;
 				double tileReadDynamicEnergy = 0;
 				double tilebufferLatency = 0;
@@ -650,11 +653,12 @@ double ChipCalculatePerformance(InputParameter& inputParameter, Technology& tech
 				vector<vector<double> > tileInput;
 				tileInput = CopyInput(inputVector, i*desiredTileSizeCM, numInVector*param->numBitInput, numRowMatrix);
 				
+				
 				TileCalculatePerformance(tileMemory, tileMemory, tileInput, markNM[l], ceil((double)desiredTileSizeCM/(double)desiredPESizeCM), desiredPESizeCM, speedUpEachLayer[0][l], speedUpEachLayer[1][l],
 									numRowMatrix, numColMatrix, numInVector*param->numBitInput, cell, &tileReadLatency, &tileReadDynamicEnergy, &tileLeakage,
 									&tilebufferLatency, &tilebufferDynamicEnergy, &tileicLatency, &tileicDynamicEnergy, 
 									&tileLatencyADC, &tileLatencyAccum, &tileLatencyOther, &tileEnergyADC, &tileEnergyAccum, &tileEnergyOther, CalculateclkFreq, clkPeriod);
-
+				
 				*readLatency = MAX(tileReadLatency, (*readLatency));
 				*readDynamicEnergy += tileReadDynamicEnergy;
 				*bufferLatency = MAX(tilebufferLatency, (*bufferLatency));

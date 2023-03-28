@@ -137,6 +137,37 @@ void RowDecoder::CalculateArea(double _newHeight, double _newWidth, AreaModify _
 		area = 0;
 		height = 0;
 		width = 0;
+
+		// 1.4 update: Metal pitch update
+		// Metal Pitch Update
+		double Metal2_pitch = M2_PITCH;
+		double Metal3_pitch = M3_PITCH;
+
+		if (tech.featureSize == 14 * 1e-9){
+		Metal2_pitch  *= ( (double)M2_PITCH_14nm/M2_PITCH);
+		Metal3_pitch *=  ( (double)M3_PITCH_14nm/M3_PITCH);}
+		else if (tech.featureSize == 10 * 1e-9){
+		Metal2_pitch *= ( (double)M2_PITCH_10nm /M2_PITCH);
+		Metal3_pitch *= ( (double)M3_PITCH_10nm/M3_PITCH);}
+		else if (tech.featureSize == 7 * 1e-9){
+		Metal2_pitch *= ( (double)M2_PITCH_7nm /M2_PITCH);
+		Metal3_pitch *= ( (double)M3_PITCH_7nm/M3_PITCH);}
+		else if (tech.featureSize == 5 * 1e-9){
+		Metal2_pitch *= ( (double)M2_PITCH_5nm /M2_PITCH);
+		Metal3_pitch *= ( (double)M3_PITCH_5nm/M3_PITCH);}
+		else if (tech.featureSize == 3 * 1e-9){
+		Metal2_pitch *= ( (double)M2_PITCH_3nm /M2_PITCH);
+		Metal3_pitch *= ( (double)M3_PITCH_3nm/M3_PITCH);}
+		else if (tech.featureSize == 2 * 1e-9){
+		Metal2_pitch *= ( (double)M2_PITCH_2nm /M2_PITCH);
+		Metal3_pitch *= ( (double)M3_PITCH_2nm/M3_PITCH);}
+		else if (tech.featureSize == 1 * 1e-9){
+		Metal2_pitch *= ( (double)M2_PITCH_1nm /M2_PITCH);
+		Metal3_pitch *= ( (double)M3_PITCH_1nm/M3_PITCH);}
+		else{
+		Metal2_pitch *= 1;
+		Metal3_pitch *=1;}
+
 		// INV
 		CalculateGateArea(INV, 1, widthInvN, widthInvP, tech.featureSize*MAX_TRANSISTOR_HEIGHT, tech, &hInv, &wInv);
 		// NAND2
@@ -146,6 +177,7 @@ void RowDecoder::CalculateArea(double _newHeight, double _newWidth, AreaModify _
 		// Output Driver INV
 		CalculateGateArea(INV, 1, widthDriverInvN, widthDriverInvP, tech.featureSize*MAX_TRANSISTOR_HEIGHT, tech, &hDriverInv, &wDriverInv);
 
+		// 1.4 update: Metal pitch constant replaced with newly defined variables
 		if (mode == REGULAR_ROW) {	// Connect to rows
 			if (_newHeight && _option==NONE) {
 				if ((hNor > _newHeight) || (hNand > _newHeight) || (hInv > _newHeight)) {
@@ -180,7 +212,7 @@ void RowDecoder::CalculateArea(double _newHeight, double _newWidth, AreaModify _
 				}
 				
 				height = _newHeight;
-				width = wInv * numColInv + wNand * numColNand + M3_PITCH * numMetalConnection * tech.featureSize + wNor * numColNor;
+				width = wInv * numColInv + wNand * numColNand + Metal3_pitch * numMetalConnection * tech.featureSize + wNor * numColNor;
 				if (MUX) {    // Mux enable circuit (NAND + INV) + INV
 					width += (wNand + wInv * 2) * numColNor;
 				} else {    // REGULAR: 2 INV as output driver
@@ -188,7 +220,7 @@ void RowDecoder::CalculateArea(double _newHeight, double _newWidth, AreaModify _
 				}
 			} else {
 				height = MAX(hNor*numNor, hNand*numNand);
-				width = wInv + wNand + M3_PITCH * numMetalConnection * tech.featureSize + wNor;
+				width = wInv + wNand + Metal3_pitch * numMetalConnection * tech.featureSize + wNor;
 				if (MUX) {	// Mux enable circuit (NAND + INV) + INV
 					width += wNand + wInv * 2;
 				} else {	// REGULAR: 2 INV as output driver
@@ -229,14 +261,14 @@ void RowDecoder::CalculateArea(double _newHeight, double _newWidth, AreaModify _
 				numRowInv = (int)ceil((double)numInv/numInvPerRow);
 
 				width = _newWidth;
-				height = hInv * numRowInv + hNand * numRowNand + M2_PITCH * numMetalConnection * tech.featureSize + hNor * numRowNor;
+				height = hInv * numRowInv + hNand * numRowNand + Metal2_pitch * numMetalConnection * tech.featureSize + hNor * numRowNor;
 				if (MUX) {    // Mux enable circuit (NAND + INV) + INV
 					height += (hNand + hInv * 2) * numRowNor;
 				} else {    // REGULAR: 2 INV as output driver
 					height += (hDriverInv * 2) * numRowNor;
 				}
 			} else {
-				height = hInv + hNand + M2_PITCH * numMetalConnection * tech.featureSize + hNor;
+				height = hInv + hNand + Metal2_pitch * numMetalConnection * tech.featureSize + hNor;
 				width = MAX(wNor*numNor, wNand*numNand);
 				if (MUX) {    // Mux enable circuit (NAND + INV) + INV
 					height += hNand + hInv * 2;
@@ -281,7 +313,9 @@ void RowDecoder::CalculateArea(double _newHeight, double _newWidth, AreaModify _
 	}
 }
 
-void RowDecoder::CalculateLatency(double _rampInput, double _capLoad1, double _capLoad2, double numRead, double numWrite) {
+// 1.4 update: update the arguments of the latency function
+
+void RowDecoder::CalculateLatency(double _rampInput, double _capLoad1, double _capLoad2, double resLoad, double colnum, double numRead, double numWrite){
 	if (!initialized) {
 		cout << "[Row Decoder Latency] Error: Require initialization first!" << endl;
 	} else {
@@ -378,6 +412,10 @@ void RowDecoder::CalculateLatency(double _rampInput, double _capLoad1, double _c
 			writeLatency += horowitz(tr, beta, rampNorOutput, &rampInvOutput);
 			// 2nd INV
 			resPullUp = CalculateOnResistance(widthDriverInvP, PMOS, inputParameter.temperature, tech);
+
+			// 1.4 update : resisitve load at the output is considered
+			tr = resPullUp * (capDriverInvOutput + capLoad1) + (resLoad * (capLoad1 + capLoad1/colnum))/2;
+
 			tr = resPullUp * (capDriverInvOutput + capLoad1);
 			gm = CalculateTransconductance(widthDriverInvP, PMOS, tech);
 			beta = 1 / (resPullUp * gm);

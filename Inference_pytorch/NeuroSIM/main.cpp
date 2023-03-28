@@ -108,6 +108,14 @@ int main(int argc, char * argv[]) {
 		param->numColPerSynapse = ceil((double)param->synapseBit/(double)param->cellBit); 
 	}
 	
+
+	// 1.4 update : Implementation for conventional sequential 
+	if (param->conventionalSequential == 1)
+	{
+	param->numColMuxed = param->numColPerSynapse;
+	}
+
+
 	double maxPESizeNM, maxTileSizeCM, numPENM;
 	vector<int> markNM;
 	vector<int> pipelineSpeedUp;
@@ -184,6 +192,7 @@ int main(int argc, char * argv[]) {
 		numComputation += 2*(netStructure[i][0] * netStructure[i][1] * netStructure[i][2] * netStructure[i][3] * netStructure[i][4] * netStructure[i][5]);
 	}
 
+	
 	ChipInitialize(inputParameter, tech, cell, netStructure, markNM, numTileEachLayer,
 					numPENM, desiredNumTileNM, desiredPESizeNM, desiredNumTileCM, desiredTileSizeCM, desiredPESizeCM, numTileRow, numTileCol);
 			
@@ -193,9 +202,10 @@ int main(int argc, char * argv[]) {
 	double NMTileheight = 0;
 	double NMTilewidth = 0;
 	vector<double> chipAreaResults;
-		 			
+	
 	chipAreaResults = ChipCalculateArea(inputParameter, tech, cell, desiredNumTileNM, numPENM, desiredPESizeNM, desiredNumTileCM, desiredTileSizeCM, desiredPESizeCM, numTileRow, 
 					&chipHeight, &chipWidth, &CMTileheight, &CMTilewidth, &NMTileheight, &NMTilewidth);		
+	
 	chipArea = chipAreaResults[0];
 	chipAreaIC = chipAreaResults[1];
 	chipAreaADC = chipAreaResults[2];
@@ -240,6 +250,7 @@ int main(int argc, char * argv[]) {
 	if (param->synchronous){
 		// calculate clkFreq
 		for (int i=0; i<netStructure.size(); i++) {		
+			
 			ChipCalculatePerformance(inputParameter, tech, cell, i, argv[2*i+4], argv[2*i+4], argv[2*i+5], netStructure[i][6],
 						netStructure, markNM, numTileEachLayer, utilizationEachLayer, speedUpEachLayer, tileLocaEachLayer,
 						numPENM, desiredPESizeNM, desiredTileSizeCM, desiredPESizeCM, CMTileheight, CMTilewidth, NMTileheight, NMTilewidth,
@@ -248,6 +259,7 @@ int main(int argc, char * argv[]) {
 			if(clkPeriod < layerclkPeriod){
 				clkPeriod = layerclkPeriod;
 			}			
+			
 		}		
 		if(param->clkFreq > 1/clkPeriod){
 			param->clkFreq = 1/clkPeriod;
@@ -494,6 +506,45 @@ int main(int argc, char * argv[]) {
 	cout << "Total Run-time of NeuroSim: " << duration.count() << " seconds" << endl;
 	cout << "------------------------------ Simulation Performance --------------------------------" <<  endl;
 	
+	// test for 1.4 update 
+
+	fstream read;
+	read.open("/home/junmo/DNN_Neurosim_original/Data_Technology/0323_Test_After.csv",fstream::app); 	
+	
+	read<<param->technode<<", " ;
+	read<<param->operationmode<<", ";
+	read<<param->memcelltype<<", ";
+	read<<param->accesstype<<", ";
+
+	read<<chipArea*1e12<<", "<<chipAreaArray*1e12<<", "<<chipAreaIC*1e12<<", ";
+	read<<chipAreaADC*1e12<<", "<<chipAreaAccum*1e12<<", "<<chipAreaOther*1e12<<", ";
+	read<<clkPeriod*1e9<<", ";
+	read<<chipReadLatency*1e9<<", ";
+	read<<chipReadDynamicEnergy*1e12<<", ";
+	read<<chipLeakageEnergy*1e12<<", ";
+	read<<chipLeakage*1e6<<", ";
+
+	read<<chipbufferLatency*1e9<<", ";
+	read<<chipbufferReadDynamicEnergy*1e12<<", ";
+	read<<chipicLatency*1e9 <<", ";
+	read<<chipicReadDynamicEnergy*1e12 <<", ";
+
+	read<<chipLatencyADC*1e9<<", ";
+	read<<chipLatencyAccum*1e9 <<", ";
+	read<<chipLatencyOther*1e9 <<", ";
+	read<<chipEnergyADC*1e12 <<", ";
+	read<<chipEnergyAccum*1e12<<", ";
+	read<<chipEnergyOther*1e12<<", ";
+
+	read<<numComputation/(chipReadDynamicEnergy*1e12+chipLeakageEnergy*1e12)/param->zeta<<", ";
+	read<<numComputation/(chipReadLatency*1e12)<<", ";
+	read<<1/(chipReadLatency) <<", ";
+	read<<numComputation/(chipReadLatency*1e12)/(chipArea*1e6) <<", ";
+	read<<numComputation<<", ";
+
+	read<<endl;
+
+
 	return 0;
 }
 

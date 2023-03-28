@@ -71,7 +71,9 @@ void NewSwitchMatrix::Initialize(int _numOutput, double _activityRowRead, double
 	widthTgN = MIN_NMOS_SIZE * tech.featureSize;
 	widthTgP = tech.pnSizeRatio * MIN_NMOS_SIZE * tech.featureSize;
 	EnlargeSize(&widthTgN, &widthTgP, tech.featureSize*MAX_TRANSISTOR_HEIGHT, tech);
-	resTg = CalculateOnResistance(widthTgN, NMOS, inputParameter.temperature, tech) * LINEAR_REGION_RATIO;
+
+	// 1.4 update
+	resTg = 1/(1/CalculateOnResistance_normal(widthTgN, NMOS, inputParameter.temperature, tech) + 1/CalculateOnResistance_normal(widthTgP, NMOS, inputParameter.temperature, tech));
 	
 	initialized = true;
 }
@@ -85,6 +87,27 @@ void NewSwitchMatrix::CalculateArea(double _newHeight, double _newWidth, AreaMod
 		height = 0;
 		width = 0;
 		double minCellHeight = MAX_TRANSISTOR_HEIGHT * tech.featureSize;   // min standard cell height for 1 Tg 
+		
+
+		// 1.4 update : new cell dimension
+		if (tech.featureSize == 14 * 1e-9)
+		minCellHeight *=  ( (double)MAX_TRANSISTOR_HEIGHT_14nm /MAX_TRANSISTOR_HEIGHT);
+		else if (tech.featureSize == 10 * 1e-9)
+		minCellHeight *= ( (double)MAX_TRANSISTOR_HEIGHT_10nm /MAX_TRANSISTOR_HEIGHT);
+		else if (tech.featureSize == 7 * 1e-9)
+		minCellHeight *= ( (double)MAX_TRANSISTOR_HEIGHT_7nm /MAX_TRANSISTOR_HEIGHT);
+		else if (tech.featureSize == 5 * 1e-9)
+		minCellHeight *= ( (double)MAX_TRANSISTOR_HEIGHT_5nm /MAX_TRANSISTOR_HEIGHT);
+		else if (tech.featureSize == 3 * 1e-9)
+		minCellHeight *= ( (double)MAX_TRANSISTOR_HEIGHT_3nm /MAX_TRANSISTOR_HEIGHT);
+		else if (tech.featureSize == 2 * 1e-9)
+		minCellHeight *= ( (double)MAX_TRANSISTOR_HEIGHT_2nm /MAX_TRANSISTOR_HEIGHT);
+		else if (tech.featureSize == 1 * 1e-9)
+		minCellHeight *= ( (double)MAX_TRANSISTOR_HEIGHT_1nm /MAX_TRANSISTOR_HEIGHT);
+		else
+		minCellHeight *= 1;		
+		
+		
 		if (_newHeight && _option==NONE) {
 			if (_newHeight < minCellHeight) {
 				cout << "[NewSwitchMatrix] Error: pass gate height is even larger than the array height" << endl;
@@ -144,7 +167,11 @@ void NewSwitchMatrix::CalculateLatency(double _rampInput, double _capLoad, doubl
 		dff.CalculateLatency(1e20, numRead);
 
 		// TG
-		capOutput = capTgDrain * 5;         // pass 2 TG, 5 loading drain capacitance
+		// 1.4 update: needs check, outputcap ( + capTgGateN*0.5 + capTgGateP*0.5 )
+		capOutput = capTgDrain * 4 + capTgGateN*0.5 + capTgGateP*0.5;         // pass 2 TG, 5 loading drain capacitance
+
+		// 1.4 update: needs check, resTg coefficients
+		
 		tr = resTg * (capOutput + capLoad) + resLoad * capLoad / 2;     // elmore delay model
 		readLatency += horowitz(tr, 0, rampInput, &rampOutput);	// get from chargeLatency in the original SubArray.cpp
 		

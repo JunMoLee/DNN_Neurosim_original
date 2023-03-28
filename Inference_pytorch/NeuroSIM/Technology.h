@@ -80,6 +80,19 @@ public:
     double current_gmPmos;		/* PMOS current at 0.7*vdd for gm calculation, Unit: A/m/V*/ 
   
 	double capPolywire;	/* Poly wire capacitance, Unit: F/m */
+
+	// 1.4 update : additional parameters related to added nodes
+
+	double max_sheet_num=0;
+	double thickness_sheet=0;
+	double width_sheet=0;
+	double effective_width=0;
+	double max_fin_num=0;
+	double max_fin_per_GAA=0;
+	double gm_oncurrent = 0;  // gm at on current
+	double cap_draintotal = 0;
+	
+
 };
 
 #endif /* TECHNOLOGY_H_ */

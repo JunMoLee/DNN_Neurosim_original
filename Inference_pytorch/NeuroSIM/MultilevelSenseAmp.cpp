@@ -359,6 +359,8 @@ double MultilevelSenseAmp::GetColumnPower(double columnRes) {
 					Column_Power += 0.0210*exp(-2.311*log10(columnRes));
 				}
 			} else {                         // LP
+
+			// 1.4 update: projection to 1 nm node (exponential curve fitting)
 				if (param->technode == 130) {
 					Column_Power = 18.09*(levelOutput-1)*1e-6;
 					Column_Power += 0.1380*exp(-2.303*log10(columnRes));
@@ -383,9 +385,21 @@ double MultilevelSenseAmp::GetColumnPower(double columnRes) {
 				} else if (param->technode == 10){   
 					Column_Power = 0.55*(levelOutput-1)*1e-6;
 					Column_Power += 0.0315*exp(-2.303*log10(columnRes));
-				} else {   // 7nm
+				} else if (param->technode == 7){   // 7nm
 					Column_Power = 0.35*(levelOutput-1)*1e-6;
 					Column_Power += 0.0235*exp(-2.303*log10(columnRes));
+				} else if (param->technode == 5){   // 5nm
+					Column_Power = 0.25914*(levelOutput-1)*1e-6;
+					Column_Power += 0.018602*exp(-2.303*log10(columnRes));
+				} else if (param->technode == 3){   // 3nm
+					Column_Power = 0.192217*(levelOutput-1)*1e-6;
+					Column_Power += 0.01491*exp(-2.303*log10(columnRes));
+				} else if (param->technode == 2){   // 2nm
+					Column_Power = 0.16546*(levelOutput-1)*1e-6;
+					Column_Power += 0.013349*exp(-2.303*log10(columnRes));
+				} else {   // 1nm
+					Column_Power = 0.142427*(levelOutput-1)*1e-6;
+					Column_Power += 0.01195*exp(-2.303*log10(columnRes));
 				}
 			}
 		}
@@ -426,6 +440,7 @@ double MultilevelSenseAmp::GetColumnPower(double columnRes) {
 					Column_Power += 0.040310*exp(-2.311*log10(columnRes));
 				}
 			} else {                         // LP
+			// 1.4 update: projection to 1 nm node (exponential curve fitting)
 				if (param->technode == 130) {
 					Column_Power = 23.4*(levelOutput-1)*1e-6;
 					Column_Power += 0.169380*exp(-2.303*log10(columnRes));
@@ -450,9 +465,21 @@ double MultilevelSenseAmp::GetColumnPower(double columnRes) {
 				} else if (param->technode == 10){   
 					Column_Power = 0.6917*(levelOutput-1)*1e-6;
 					Column_Power += 0.051580*exp(-2.303*log10(columnRes));
-				} else {   // 7nm
+				} else if (param->technode == 7){   // 7nm
 					Column_Power = 0.4211*(levelOutput-1)*1e-6;
 					Column_Power += 0.043555*exp(-2.303*log10(columnRes));
+				} else if (param->technode == 5){   // 5nm
+					Column_Power = 0.3278*(levelOutput-1)*1e-6;
+					Column_Power += 0.03991*exp(-2.303*log10(columnRes));
+				} else if (param->technode == 3){   // 3nm
+					Column_Power = 0.2480*(levelOutput-1)*1e-6;
+					Column_Power += 0.03626*exp(-2.303*log10(columnRes));
+				} else if (param->technode == 2){   // 2nm
+					Column_Power = 0.2157*(levelOutput-1)*1e-6;
+					Column_Power += 0.03456*exp(-2.303*log10(columnRes));
+				} else {   // 1nm
+					Column_Power = 0.1876*(levelOutput-1)*1e-6;
+					Column_Power += 0.03294*exp(-2.303*log10(columnRes));
 				}
 			}
 		}
