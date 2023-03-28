@@ -58,7 +58,9 @@ public:
 	void SaveOutput(const char* str);
 	void Initialize(DecoderMode _mode, int _numAddrRow, bool _MUX, bool _parallel);
 	void CalculateArea(double _newHeight, double _newWidth, AreaModify _option);
-	void CalculateLatency(double _rampInput, double _capLoad1, double _capLoad2, double numRead, double numWrite);
+	
+	// 1.4 update: update the latency function
+	void CalculateLatency(double _rampInput, double _capLoad1, double _capLoad2, double resLoad, double colnum, double numRead, double numWrite);
 	void CalculatePower(double numRead, double numWrite);
 
 	/* Properties */

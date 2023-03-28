@@ -71,6 +71,8 @@ double CalculateGateLeakage(
 
 double CalculateOnResistance(double width, int type, double temperature, Technology tech);
 
+double CalculateOnResistance_normal(double width, int type, double temperature, Technology tech); // 1.4 update: for normal on resistance
+
 double CalculateTransconductance(double width, int type, Technology tech);
 
 double horowitz(double tr, double beta, double rampInput, double *rampOutput);

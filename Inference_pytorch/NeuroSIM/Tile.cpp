@@ -185,7 +185,8 @@ void TileInitialize(InputParameter& inputParameter, Technology& tech, MemCell& c
 			if (param->reLu) {
 				reLuCM->Initialize(ceil((double)peSizeCM*(double)param->numColSubArray/(double)param->numColMuxed), param->numBitInput, param->clkFreq);
 			} else {
-				sigmoidCM->Initialize(false, param->numBitInput, ceil((double)log2((double)param->levelOutput))+param->numBitInput+param->numColPerSynapse+1+ceil((double)log2((double)peSizeCM/(double)param->numRowSubArray))+ceil((double)log2((double)numPECM)), 
+				// 1.4 update
+				sigmoidCM->Initialize(param->Activationtype, param->numBitInput, ceil((double)log2((double)param->levelOutput))+param->numBitInput+param->numColPerSynapse+1+ceil((double)log2((double)peSizeCM/(double)param->numRowSubArray))+ceil((double)log2((double)numPECM)), 
 								ceil((double)numPECM*(double)param->numColSubArray/(double)param->numColMuxed), param->clkFreq);
 			}
 			numOutBufferCore = ceil((param->numBitInput*numPECM*param->numColSubArray/param->numColMuxed)/(param->tileBufferCoreSizeRow*param->tileBufferCoreSizeCol));
@@ -212,7 +213,8 @@ void TileInitialize(InputParameter& inputParameter, Technology& tech, MemCell& c
 			if (param->reLu) {
 				reLuCM->Initialize(ceil((double)peSizeCM*(double)param->numColSubArray/(double)param->numColMuxed), param->numBitInput, param->clkFreq);
 			} else {
-				sigmoidCM->Initialize(false, param->numBitInput, ceil((double)log2((double)param->numRowSubArray)+(double)param->cellBit-1)+param->numBitInput+param->numColPerSynapse+1+ceil((double)log2((double)peSizeCM/(double)param->numRowSubArray))+ceil((double)log2((double)numPECM)), 
+				// 1.4 update
+				sigmoidCM->Initialize(param->Activationtype, param->numBitInput, ceil((double)log2((double)param->numRowSubArray)+(double)param->cellBit-1)+param->numBitInput+param->numColPerSynapse+1+ceil((double)log2((double)peSizeCM/(double)param->numRowSubArray))+ceil((double)log2((double)numPECM)), 
 								ceil(numPECM*(double)param->numColSubArray/(double)param->numColMuxed), param->clkFreq);
 			}
 			numOutBufferCore = ceil((param->numBitInput*numPECM*param->numColSubArray/param->numColMuxed)/(param->tileBufferCoreSizeRow*param->tileBufferCoreSizeCol));
@@ -365,6 +367,8 @@ void TileCalculatePerformance(const vector<vector<double> > &newMemory, const ve
 	if (!novelMap) {   // conventional Mapping
 		if (speedUpRow*speedUpCol > 1) {
 			if ((speedUpRow >= numPE) && (speedUpCol >= numPE)) {
+
+				
 				// duplication in PE or subArray --> tell each PE to take the whole assigned weight  --> "fully" duplication
 				// assign weight and input to specific tile
 				vector<vector<double> > pEMemory;
@@ -408,12 +412,13 @@ void TileCalculatePerformance(const vector<vector<double> > &newMemory, const ve
 							vector<vector<double> > pEInput;
 							pEInput = CopyPEInput(inputVector, i*peSize, numInVector, numRowMatrix);
 							
+							
 							ProcessingUnitCalculatePerformance(subArrayInPE, pEMemory, pEMemory, pEInput, 1, 1, 
 												numSubArrayRow, numSubArrayCol, numRowMatrix, numColMatrix, numInVector, cell, false,
 												&PEreadLatency, &PEreadDynamicEnergy, &PEleakage,
 												&PEbufferLatency, &PEbufferDynamicEnergy, &PEicLatency, &PEicDynamicEnergy,
 												&peLatencyADC, &peLatencyAccum, &peLatencyOther, &peEnergyADC, &peEnergyAccum, &peEnergyOther, CalculateclkFreq, clkPeriod);
-					
+							
 							*readLatency = MAX(PEreadLatency, (*readLatency));
 							*readDynamicEnergy += PEreadDynamicEnergy;
 							*bufferLatency = MAX(PEbufferLatency, (*bufferLatency));

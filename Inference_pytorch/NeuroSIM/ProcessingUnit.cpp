@@ -391,6 +391,8 @@ double ProcessingUnitCalculatePerformance(SubArray *subArray, const vector<vecto
 			subArrayLatencyOther = 0;
 
 			for (int k=0; k<numInVector; k++) {                 // calculate single subArray through the total input vectors
+
+			
 				double activityRowRead = 0;
 				vector<double> input;
 				input = GetInputVector(subArrayInput, k, &activityRowRead);
@@ -452,6 +454,7 @@ double ProcessingUnitCalculatePerformance(SubArray *subArray, const vector<vecto
 					subArrayLatencyOther = 0;
 					
 					for (int k=0; k<numInVector; k++) {                 // calculate single subArray through the total input vectors
+						
 						double activityRowRead = 0;
 						vector<double> input;
 						input = GetInputVector(subArrayInput, k, &activityRowRead);
@@ -467,7 +470,9 @@ double ProcessingUnitCalculatePerformance(SubArray *subArray, const vector<vecto
 						vector<double> columnResistance;
 						columnResistance = GetColumnResistance(input, subArrayMemory, cell, param->parallelRead, subArray->resCellAccess);
 
+						
 						subArray->CalculateLatency(1e20, columnResistance, CalculateclkFreq);
+						
 						if(CalculateclkFreq && (*clkPeriod < subArray->readLatency)){
 							*clkPeriod = subArray->readLatency;					//clk freq is decided by the longest sensing latency
 						}
@@ -502,6 +507,7 @@ double ProcessingUnitCalculatePerformance(SubArray *subArray, const vector<vecto
 			*readDynamicEnergy += adderTreeNM->readDynamicEnergy;
 			*coreEnergyAccum += adderTreeNM->readDynamicEnergy;
 		} else {
+
 			adderTreeCM->CalculateLatency((int)(numInVector/param->numBitInput)*ceil(param->numColMuxed/param->numColPerSynapse), ceil((double) weightMatrixRow/(double) param->numRowSubArray), 0);
 			adderTreeCM->CalculatePower((int)(numInVector/param->numBitInput)*ceil(param->numColMuxed/param->numColPerSynapse), ceil((double) weightMatrixRow/(double) param->numRowSubArray));
 			*readLatency += adderTreeCM->readLatency;

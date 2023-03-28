@@ -75,6 +75,21 @@ public:
 	double AR, Rho, wireLengthRow, wireLengthCol, unitLengthWireResistance, wireResistanceRow, wireResistanceCol;
 	
 	double alpha, beta, gamma, delta, epsilon, zeta;
+
+	// 1.4 update: BEOL related parameters added
+	
+	double Metal0=0;
+	double Metal1=0;
+	double AR_Metal0=0;
+	double AR_Metal1=0;
+	double Rho_Metal0=0;
+	double Rho_Metal1=0;
+	double Metal0_unitwireresis=0;
+	double Metal1_unitwireresis=0;
+
+	// 1.4 update: add activation implementation option
+
+	bool Activationtype; // true: SRAM, False: RRAM
 };
 
 #endif

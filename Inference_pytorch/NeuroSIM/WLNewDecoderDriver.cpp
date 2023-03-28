@@ -94,6 +94,26 @@ void WLNewDecoderDriver::CalculateArea(double _newHeight, double _newWidth, Area
 	} else {
 		double hNand, wNand, hInv, wInv, hTg, wTg;
 		double minCellHeight = MAX_TRANSISTOR_HEIGHT * tech.featureSize;
+		
+		// 1.4 update: new cell dimension
+		if (tech.featureSize == 14 * 1e-9)
+		minCellHeight *= (MAX_TRANSISTOR_HEIGHT_14nm/MAX_TRANSISTOR_HEIGHT);
+		else if (tech.featureSize == 10 * 1e-9)
+		minCellHeight *= (MAX_TRANSISTOR_HEIGHT_10nm /MAX_TRANSISTOR_HEIGHT);
+		else if (tech.featureSize == 7 * 1e-9)
+		minCellHeight *= (MAX_TRANSISTOR_HEIGHT_7nm /MAX_TRANSISTOR_HEIGHT);
+		else if (tech.featureSize == 5 * 1e-9)
+		minCellHeight *= (MAX_TRANSISTOR_HEIGHT_5nm /MAX_TRANSISTOR_HEIGHT);
+		else if (tech.featureSize == 3 * 1e-9)
+		minCellHeight *= (MAX_TRANSISTOR_HEIGHT_3nm /MAX_TRANSISTOR_HEIGHT);
+		else if (tech.featureSize == 2 * 1e-9)
+		minCellHeight *= (MAX_TRANSISTOR_HEIGHT_2nm /MAX_TRANSISTOR_HEIGHT);
+		else if (tech.featureSize == 1 * 1e-9)
+		minCellHeight *= (MAX_TRANSISTOR_HEIGHT_1nm /MAX_TRANSISTOR_HEIGHT);
+		else
+		minCellHeight *= 1;		
+
+		
 		area = 0;
 		height = 0;
 		width = 0;
@@ -152,8 +172,10 @@ void WLNewDecoderDriver::CalculateArea(double _newHeight, double _newWidth, Area
 		// Resistance
 		// TG
 		double resTgN, resTgP;
-		resTgN = CalculateOnResistance(widthTgN, NMOS, inputParameter.temperature, tech) * LINEAR_REGION_RATIO;
-		resTgP = CalculateOnResistance(widthTgP, PMOS, inputParameter.temperature, tech) * LINEAR_REGION_RATIO;
+
+		// 1.4 update: change to CalculateOnResistance_normal
+		resTgN = CalculateOnResistance_normal(widthTgN, NMOS, inputParameter.temperature, tech) * LINEAR_REGION_RATIO;
+		resTgP = CalculateOnResistance_normal(widthTgP, PMOS, inputParameter.temperature, tech) * LINEAR_REGION_RATIO;
 		resTg = 1/(1/resTgN + 1/resTgP);
 
 		// Capacitance

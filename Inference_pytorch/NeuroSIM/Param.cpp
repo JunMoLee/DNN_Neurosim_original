@@ -58,7 +58,7 @@ Param::Param() {
 	operationmode = 2;     		// 1: conventionalSequential (Use several multi-bit RRAM as one synapse)
 								// 2: conventionalParallel (Use several multi-bit RRAM as one synapse)
 	
-	memcelltype = 2;        	// 1: cell.memCellType = Type::SRAM
+	memcelltype = 1;        	// 1: cell.memCellType = Type::SRAM
 								// 2: cell.memCellType = Type::RRAM
 								// 3: cell.memCellType = Type::FeFET
 	
@@ -127,9 +127,54 @@ Param::Param() {
 	// technode: 22      --> wireWidth: 40
 	// technode: 14      --> wireWidth: 25
 	// technode: 10, 7   --> wireWidth: 18
-	technode = 22;                      // Technology
-	featuresize = 40e-9;                // Wire width for subArray simulation
-	wireWidth = 40;                     // wireWidth of the cell for Accuracy calculation
+	
+	// 1.4 update: Activation implementation option added
+	Activationtype=false; // true: SRAM, False: RRAM
+
+// For Linux Automation (test for 1.4 update)
+const int 
+tech=13
+;
+
+	// 1.4 update: new technology node added
+
+	switch (tech){
+		case 0: technode = 130; break;  
+		case 1:technode =  90; break;  
+		case 2: technode =  65; break;  
+		case 3: technode =  45; break;  
+		case 4: technode =  32; break;  
+		case 5: technode =  22; break; 
+		case 6:technode =  14; break;  
+		case 7: technode =  10; break;  
+		case 8: technode = 7; break;  
+		case 9: technode =  5; break;  
+		case 10: technode =  3;  break; 
+		case 11: technode =  2;  break;  
+		case 12: technode =  1; break; 
+	} 
+
+// 1.4 update: new wire width
+
+	switch (technode){
+		case 130: 	Metal0 = 175; Metal1 = 175; wireWidth = 175; featuresize = wireWidth*1e-9; break;  
+		case 90: 	Metal0 = 110; Metal1 = 110; wireWidth=110; featuresize = wireWidth*1e-9; break;  
+		case 65:	Metal0 = 105; Metal1 = 105; wireWidth=105; featuresize = wireWidth*1e-9; break;  
+		case 45:	Metal0 = 80; Metal1 = 80; wireWidth=80; featuresize = wireWidth*1e-9; break;  
+		case 32:	Metal0 = 56; Metal1 = 56; wireWidth=56; featuresize = wireWidth*1e-9; break;  
+		case 22:	Metal0 = 40; Metal1 = 40; wireWidth=40; featuresize = wireWidth*1e-9; break; 
+		case 14:	Metal0 = 32; Metal1 = 39; wireWidth=32; featuresize = wireWidth*1e-9; break;  
+		case 10:	Metal0 = 22; Metal1 = 32; wireWidth=22; featuresize = wireWidth*1e-9; break;  
+		case 7:		Metal0 = 20; Metal1 = 28.5; wireWidth=20; featuresize = wireWidth*1e-9; break;  
+		case 5:		Metal0 = 15; Metal1 = 17; wireWidth=15; featuresize = wireWidth*1e-9; break;  
+		case 3:		Metal0 = 12; Metal1 = 16; wireWidth=12; featuresize = wireWidth*1e-9; break; 
+		case 2:		Metal0 = 10; Metal1 = 11.5; wireWidth=10; featuresize = wireWidth*1e-9; break;  
+		case 1:		Metal0 = 8; Metal1 = 10; wireWidth=8; featuresize = wireWidth*1e-9; break;  
+		case -1:	break;	
+		default:	exit(-1); puts("Wire width out of range"); 
+	}
+	
+
 	globalBusDelayTolerance = 0.1;      // to relax bus delay for global H-Tree (chip level: communication among tiles), if tolerance is 0.1, the latency will be relax to (1+0.1)*optimalLatency (trade-off with energy)
 	localBusDelayTolerance = 0.1;       // to relax bus delay for global H-Tree (tile level: communication among PEs), if tolerance is 0.1, the latency will be relax to (1+0.1)*optimalLatency (trade-off with energy)
 	treeFoldedRatio = 4;                // the H-Tree is assumed to be able to folding in layout (save area)
@@ -139,12 +184,49 @@ Param::Param() {
 
 	numRowSubArray = 128;               // # of rows in single subArray
 	numColSubArray = 128;               // # of columns in single subArray
+
+
+	/*** initialize operationMode as default ***/ 
 	
+	// 1.4 update: move the operaion mode up
+
+	conventionalParallel = 0;
+	conventionalSequential = 0;
+	BNNparallelMode = 0;                
+	BNNsequentialMode = 0;              
+	XNORsequentialMode = 0;          
+	XNORparallelMode = 0;         
+	switch(operationmode) {
+		case 6:	    XNORparallelMode = 1;               break;     
+		case 5:	    XNORsequentialMode = 1;             break;     
+		case 4:	    BNNparallelMode = 1;                break;     
+		case 3:	    BNNsequentialMode = 1;              break;     
+		case 2:	    conventionalParallel = 1;           break;     
+		case 1:	    conventionalSequential = 1;         break;     
+		default:	printf("operationmode ERROR\n");	exit(-1);
+	}
+	
+	/*** parallel read ***/
+	parallelRead = 0;
+	if(conventionalParallel || BNNparallelMode || XNORparallelMode) {
+		parallelRead = 1;
+	} else {
+		parallelRead = 0;
+	}
 	/*** option to relax subArray layout ***/
+
 	relaxArrayCellHeight = 0;           // relax ArrayCellHeight or not
 	relaxArrayCellWidth = 0;            // relax ArrayCellWidth or not
-	
+
 	numColMuxed = 8;                    // How many columns share 1 ADC (for eNVM and FeFET) or parallel SRAM
+	
+	// 1.4 update: handle the exception for conventionalsequential case
+
+	if (conventionalSequential == 1)
+	{
+	numColMuxed=numColPerSynapse;
+	}
+	
 	levelOutput = 32;                   // # of levels of the multilevelSenseAmp output, should be in 2^N forms; e.g. 32 levels --> 5-bit ADC
 	cellBit = 2;                        // precision of memory device 
 	
@@ -158,6 +240,67 @@ Param::Param() {
 	widthSRAMCellNMOS = 2;                            
 	widthSRAMCellPMOS = 1;
 	widthAccessCMOS = 1;
+
+	// 1.4 update : SRAM size update
+
+	if (technode>14){
+	widthSRAMCellNMOS = 1;                            
+	widthSRAMCellPMOS = 1;
+	widthAccessCMOS = 1;
+	heightInFeatureSizeSRAM = 10;        // SRAM Cell height in feature size  
+	widthInFeatureSizeSRAM = 28;        // SRAM Cell width in feature size  
+	}
+	else if (technode==14){ // Samsung 14 nm 
+	widthSRAMCellNMOS = 1;                            
+	widthSRAMCellPMOS = 1;
+	widthAccessCMOS = 1;
+	heightInFeatureSizeSRAM = 10.6;        // SRAM Cell height in feature size  
+	widthInFeatureSizeSRAM = 30.8;        // SRAM Cell width in feature size  
+	}
+	else if (technode==10){ // TSMC 10 nm 
+	widthSRAMCellNMOS = 1;                            
+	widthSRAMCellPMOS = 1;
+	widthAccessCMOS = 1;
+	heightInFeatureSizeSRAM = 12.8;        // SRAM Cell height in feature size  
+	widthInFeatureSizeSRAM = 31.25;        // SRAM Cell width in feature size  
+	}
+	else if (technode==7){ // TSMC IEDM 2016
+	widthSRAMCellNMOS = 1;                            
+	widthSRAMCellPMOS = 1;
+	widthAccessCMOS = 1;
+	heightInFeatureSizeSRAM = 16;        // SRAM Cell height in feature size  
+	widthInFeatureSizeSRAM = 34.43;        // SRAM Cell width in feature size  
+	}
+	else if (technode==5){ // IRDS
+	widthSRAMCellNMOS = 1;                            
+	widthSRAMCellPMOS = 1;
+	widthAccessCMOS = 1;
+	heightInFeatureSizeSRAM = 19.2;        // SRAM Cell height in feature size  
+	widthInFeatureSizeSRAM = 43.75;        // SRAM Cell width in feature size  
+	}
+	else if (technode==3){ // IRDS
+	widthSRAMCellNMOS = 1;                            
+	widthSRAMCellPMOS = 1;
+	widthAccessCMOS = 1;
+	heightInFeatureSizeSRAM = 30;        // SRAM Cell height in feature size  
+	widthInFeatureSizeSRAM = 68.26;        // SRAM Cell width in feature size  
+	}
+	else if (technode==2){ // IRDS
+	widthSRAMCellNMOS = 1;                            
+	widthSRAMCellPMOS = 1;
+	widthAccessCMOS = 1;
+	heightInFeatureSizeSRAM = 42;        // SRAM Cell height in feature size  
+	widthInFeatureSizeSRAM = 120;// 111.42;        // SRAM Cell width in feature size  
+	}
+	else if (technode==1){ // IRDS
+	widthSRAMCellNMOS = 1;                            
+	widthSRAMCellPMOS = 1;
+	widthAccessCMOS = 1;
+	heightInFeatureSizeSRAM = 80;        // SRAM Cell height in feature size  
+	widthInFeatureSizeSRAM = 144;        // SRAM Cell width in feature size  
+	}
+
+
 	minSenseVoltage = 0.1;
 	
 	/*** parameters for analog synaptic devices ***/
@@ -197,45 +340,110 @@ Param::Param() {
 		cellBit = 1;             // force cellBit = 1 for all SRAM cases
 	} 
 	
-	/*** initialize operationMode as default ***/
-	conventionalParallel = 0;
-	conventionalSequential = 0;
-	BNNparallelMode = 0;                
-	BNNsequentialMode = 0;              
-	XNORsequentialMode = 0;          
-	XNORparallelMode = 0;         
-	switch(operationmode) {
-		case 6:	    XNORparallelMode = 1;               break;     
-		case 5:	    XNORsequentialMode = 1;             break;     
-		case 4:	    BNNparallelMode = 1;                break;     
-		case 3:	    BNNsequentialMode = 1;              break;     
-		case 2:	    conventionalParallel = 1;           break;     
-		case 1:	    conventionalSequential = 1;         break;     
-		default:	printf("operationmode ERROR\n");	exit(-1);
-	}
-	
-	/*** parallel read ***/
-	parallelRead = 0;
-	if(conventionalParallel || BNNparallelMode || XNORparallelMode) {
-		parallelRead = 1;
-	} else {
-		parallelRead = 0;
-	}
+
 	
 	/*** Initialize interconnect wires ***/
-	switch(wireWidth) {
-		case 175: 	AR = 1.60; Rho = 2.20e-8; break;  // for technode: 130
-		case 110: 	AR = 1.60; Rho = 2.52e-8; break;  // for technode: 90
-		case 105:	AR = 1.70; Rho = 2.68e-8; break;  // for technode: 65
-		case 80:	AR = 1.70; Rho = 3.31e-8; break;  // for technode: 45
-		case 56:	AR = 1.80; Rho = 3.70e-8; break;  // for technode: 32
-		case 40:	AR = 1.90; Rho = 4.03e-8; break;  // for technode: 22
-		case 25:	AR = 2.00; Rho = 5.08e-8; break;  // for technode: 14
-		case 18:	AR = 2.00; Rho = 6.35e-8; break;  // for technode: 7, 10
-		case -1:	break;	// Ignore wire resistance or user define
-		default:	exit(-1); puts("Wire width out of range"); 
+
+	// 1.4 update: wirewidth
+	if (wireWidth >= 175) {
+		AR = 1.6; Rho = 2.01*1e-8;
+	} else if ((110 <= wireWidth) &&  (wireWidth < 175)) {
+		AR = 1.6; Rho = 2.20*1e-8;
+	} else if ((105 <= wireWidth) &&  (wireWidth < 110)) {
+		AR = 1.7; Rho = 2.21*1e-8;
+	} else if ((80 <= wireWidth) &&  (wireWidth < 105)){
+		AR = 1.7; Rho = 2.37*1e-8;
+	} else if ((56 <= wireWidth) &&  (wireWidth < 80)){
+		AR = 1.8; Rho = 2.63*1e-8;
+	} else if ((40 <= wireWidth) &&  (wireWidth < 56)) {
+		AR = 1.9; Rho = 2.97*1e-8;
+	} else if ((26 <= wireWidth) &&  (wireWidth < 40)) {
+		AR = 2.0; Rho = 3.6*1e-8;
+	} else if ((22 <= wireWidth) &&  (wireWidth < 26)){
+		AR = 2.00; Rho = 3.95*1e-8;
+	} else if ((20 <= wireWidth) &&  (wireWidth < 22)){
+		AR = 2.00; Rho = 4.17*1e-8; 
+	} else if ((15 <= wireWidth) &&  (wireWidth < 20)){
+		AR = 2.00; Rho = 4.98*1e-8; 
+	} else if ((12 <= wireWidth) &&  (wireWidth < 15)){
+		AR = 2.00; Rho = 5.8*1e-8; 
+	} else if ((10 <= wireWidth) &&  (wireWidth < 12)){
+		AR = 3.00; Rho = 6.65*1e-8; 
+	} else if ((8 <= wireWidth) &&  (wireWidth < 10)){
+		AR = 3.00; Rho = 7.87*1e-8; 
+	} else {
+		exit(-1); puts("Wire width out of range"); 
+	}
+
+
+	// 1.4 update: Metal0
+	if (Metal0 >= 175) {
+		AR_Metal0 = 1.6; Rho_Metal0 = 2.01*1e-8;
+	} else if ((110 <= Metal0) &&  (Metal0< 175)) {
+		AR_Metal0 = 1.6; Rho_Metal0 = 2.20*1e-8;
+	} else if ((105 <= Metal0) &&  (Metal0< 110)){
+		AR_Metal0 = 1.7; Rho_Metal0 = 2.21*1e-8;
+	} else if ((80 <= Metal0) &&  (Metal0< 105)) {
+		AR_Metal0 = 1.7; Rho_Metal0 = 2.37*1e-8;
+	} else if ((56 <= Metal0) &&  (Metal0< 80)){
+		AR_Metal0 = 1.8; Rho_Metal0 = 2.63*1e-8;
+	} else if ((40 <= Metal0) &&  (Metal0< 56)) {
+		AR_Metal0 = 1.9; Rho_Metal0 = 2.97*1e-8;
+	} else if ((26 <= Metal0) &&  (Metal0< 40)) {
+		AR_Metal0 = 2.0; Rho_Metal0 = 3.6*1e-8;
+	} else if ((22 <= Metal0) &&  (Metal0< 26)){
+		AR_Metal0 = 2.00; Rho_Metal0 = 3.95*1e-8;
+	} else if ((20 <= Metal0) &&  (Metal0< 22)){
+		AR_Metal0 = 2.00; Rho_Metal0 = 4.17*1e-8; 
+	} else if ((15 <= Metal0) &&  (Metal0< 20)){
+		AR_Metal0 = 2.00; Rho_Metal0 = 4.98*1e-8; 
+	} else if ((12 <= Metal0) &&  (Metal0< 15)){
+		AR_Metal0 = 2.00; Rho_Metal0 = 5.8*1e-8; 
+	} else if ((10 <= Metal0) &&  (Metal0< 12)){
+		AR_Metal0 = 3.00; Rho_Metal0 = 6.65*1e-8; 
+	} else if ((8 <= Metal0) &&  (Metal0< 10)){
+		AR_Metal0 = 3.00; Rho_Metal0 = 7.87*1e-8; 
+	} else {
+		exit(-1); puts("Wire width out of range"); 
 	}
 	
+	// 1.4 update: Metal1
+	if (Metal1 >= 175) {
+		AR_Metal1 = 1.6; Rho_Metal1 = 2.01*1e-8;
+	} else if ((110 <= Metal1) &&  (Metal1 < 175)) {
+		AR_Metal1 = 1.6; Rho_Metal1 = 2.20*1e-8;
+	} else if ((105 <= Metal1) &&  (Metal1 < 110)) {
+		AR_Metal1 = 1.7; Rho_Metal1 = 2.21*1e-8;
+	} else if ((80 <= Metal1) &&  (Metal1 <105)) {
+		AR_Metal1 = 1.7; Rho_Metal1 = 2.37*1e-8;
+	} else if ((56 <= Metal1) &&  (Metal1 < 80)) {
+		AR_Metal1 = 1.8; Rho_Metal1 = 2.63*1e-8;
+	} else if ((40 <= Metal1) &&  (Metal1 < 56)){
+		AR_Metal1 = 1.9; Rho_Metal1 = 2.97*1e-8;
+	} else if ((26 <= Metal1) &&  (Metal1 < 40)) {
+		AR_Metal1 = 2.0; Rho_Metal1 = 3.6*1e-8;
+	} else if ((22 <= Metal1) &&  (Metal1 < 26)){
+		AR_Metal1 = 2.00; Rho_Metal1 = 3.95*1e-8;
+	} else if ((20 <= Metal1) &&  (Metal1 < 22)){
+		AR_Metal1 = 2.00; Rho_Metal1 = 4.17*1e-8; 
+	} else if ((15 <= Metal1) &&  (Metal1 < 20)){
+		AR_Metal1 = 2.00; Rho_Metal1 = 4.98*1e-8; 
+	} else if ((12 <= Metal1) &&  (Metal1 < 15)){
+		AR_Metal1 = 2.00; Rho_Metal1 = 5.8*1e-8; 
+	} else if ((10 <= Metal1) &&  (Metal1 < 12)){
+		AR_Metal1 = 3.00; Rho_Metal1 = 6.65*1e-8; 
+	} else if ((8 <= Metal1) &&  (Metal1 < 10)){
+		AR_Metal1 = 3.00; Rho_Metal1 = 7.87*1e-8; 
+	} else {
+		exit(-1); puts("Wire width out of range"); 
+	}
+
+
+	Metal0_unitwireresis =  Rho_Metal0 / ( Metal0*1e-9 * Metal0*1e-9 * AR_Metal0 );
+	Metal1_unitwireresis =  Rho_Metal1 / ( Metal1*1e-9 * Metal1*1e-9 * AR_Metal1 );
+	
+
+
 	if (memcelltype == 1) {
 		wireLengthRow = wireWidth * 1e-9 * heightInFeatureSizeSRAM;
 		wireLengthCol = wireWidth * 1e-9 * widthInFeatureSizeSRAM;

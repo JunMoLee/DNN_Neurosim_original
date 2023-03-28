@@ -162,7 +162,9 @@ void Precharger::CalculatePower(double numRead, double numWrite) {
 		readDynamicEnergy = capLoad * tech.vdd * tech.vdd * MIN(numReadCellPerOperationNeuro, numCol) * 2;   // BL and BL_bar
 		readDynamicEnergy *= numRead;
 		// Write
-		writeDynamicEnergy = capLoad * tech.vdd * tech.vdd * MIN(numWriteCellPerOperationNeuro, numCol*activityColWrite);
+
+		// 1.4 update : update precharge write energy
+		writeDynamicEnergy = capLoad * tech.vdd * tech.vdd * MIN(numWriteCellPerOperationNeuro, numCol*activityColWrite) * 2;
 		writeDynamicEnergy *= numWrite;
 	}
 }
