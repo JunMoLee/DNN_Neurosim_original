@@ -62,6 +62,7 @@ void Technology::Initialize(int _featureSizeInNano, DeviceRoadmap _deviceRoadmap
 	double vth_list [7] = {0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1}; // dummy values, since we don't need them
 	double cap_draintotallist [7] = {2.499e-17, 2.668e-17, 2.224e-17, 2.076e-17, 1.791e-17, 1.543e-17, 1.348e-17};
 
+	// test 
 	featureSizeInNano = _featureSizeInNano;
 	featureSize = _featureSizeInNano * 1e-9;
 	transistorType = _transistorType;
