@@ -1,4 +1,4 @@
-/*******************************************************************************
+/******************out*************************************************************
 * Copyright (c) 2015-2017
 * School of Electrical, Computer and Energy Engineering, Arizona State University
 * PI: Prof. Shimeng Yu
@@ -90,6 +90,14 @@ public:
 	// 1.4 update: add activation implementation option
 
 	bool Activationtype; // true: SRAM, False: RRAM
+
+	// 1.4 update: Final driver sizing for row decoder conventional parallel mode (SRAM, RRAM)
+	// multiplied by the driver width
+	double sizingfactor_MUX= 1; 
+	double sizingfactor_WLdecoder= 1; 
+
+	// 1.4 update: Special layout
+	double speciallayout=0;
 };
 
 #endif

@@ -131,6 +131,10 @@ Param::Param() {
 	// 1.4 update: Activation implementation option added
 	Activationtype=false; // true: SRAM, False: RRAM
 
+	// 1.4 update
+	sizingfactor_MUX=1; // sizing for the final driver of mux in rowdecoder.cpp (important for technology scaling)
+	sizingfactor_WLdecoder=1; // sizing for the final driver of WLdecoder in rowdecoder.cpp (important for technology scaling)
+
 // For Linux Automation (test for 1.4 update)
 const int 
 tech=13
@@ -368,7 +372,8 @@ tech=13
 	} else if ((12 <= wireWidth) &&  (wireWidth < 15)){
 		AR = 2.00; Rho = 5.8*1e-8; 
 	} else if ((10 <= wireWidth) &&  (wireWidth < 12)){
-		AR = 3.00; Rho = 6.65*1e-8; 
+		// AR = 3.00; Rho = 6.65*1e-8; 
+		AR = 2.00; Rho = 6.61*1e-8; 
 	} else if ((8 <= wireWidth) &&  (wireWidth < 10)){
 		AR = 3.00; Rho = 7.87*1e-8; 
 	} else {
@@ -400,7 +405,8 @@ tech=13
 	} else if ((12 <= Metal0) &&  (Metal0< 15)){
 		AR_Metal0 = 2.00; Rho_Metal0 = 5.8*1e-8; 
 	} else if ((10 <= Metal0) &&  (Metal0< 12)){
-		AR_Metal0 = 3.00; Rho_Metal0 = 6.65*1e-8; 
+		// AR_Metal0 = 3.00; Rho_Metal0 = 6.65*1e-8; 
+		AR_Metal0 = 2.00; Rho_Metal0 = 6.61*1e-8;  
 	} else if ((8 <= Metal0) &&  (Metal0< 10)){
 		AR_Metal0 = 3.00; Rho_Metal0 = 7.87*1e-8; 
 	} else {
@@ -431,7 +437,8 @@ tech=13
 	} else if ((12 <= Metal1) &&  (Metal1 < 15)){
 		AR_Metal1 = 2.00; Rho_Metal1 = 5.8*1e-8; 
 	} else if ((10 <= Metal1) &&  (Metal1 < 12)){
-		AR_Metal1 = 3.00; Rho_Metal1 = 6.65*1e-8; 
+		// AR_Metal1 = 3.00; Rho_Metal1 = 6.65*1e-8; 
+		AR_Metal1 = 2.00; Rho_Metal1 = 6.61*1e-8;
 	} else if ((8 <= Metal1) &&  (Metal1 < 10)){
 		AR_Metal1 = 3.00; Rho_Metal1 = 7.87*1e-8; 
 	} else {

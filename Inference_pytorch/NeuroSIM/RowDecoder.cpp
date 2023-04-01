@@ -120,9 +120,19 @@ void RowDecoder::Initialize(DecoderMode _mode, int _numAddrRow, bool _MUX, bool 
 	    else
 		    numMetalConnection = 0;
 	
+		// 1.4 update: final driver width 
+
 	    // Output driver INV
-	    widthDriverInvN = 2 * MIN_NMOS_SIZE * tech.featureSize;
-	    widthDriverInvP = 2 * tech.pnSizeRatio * MIN_NMOS_SIZE * tech.featureSize;
+
+		if (MUX){
+	    widthDriverInvN = 2 * MIN_NMOS_SIZE * tech.featureSize * param->sizingfactor_MUX;
+	    widthDriverInvP = 2 * tech.pnSizeRatio * MIN_NMOS_SIZE * tech.featureSize * param->sizingfactor_MUX;
+		}
+		
+		else {
+	    widthDriverInvN = 2 * MIN_NMOS_SIZE * tech.featureSize * param->sizingfactor_WLdecoder;
+	    widthDriverInvP = 2 * tech.pnSizeRatio * MIN_NMOS_SIZE * tech.featureSize * param->sizingfactor_WLdecoder;			
+		}
 		// EnlargeSize(&widthDriverInvN, &widthDriverInvP, tech.featureSize*MAX_TRANSISTOR_HEIGHT, tech);
     }
 
@@ -310,6 +320,8 @@ void RowDecoder::CalculateArea(double _newHeight, double _newWidth, AreaModify _
 		}
 		// Output Driver INV
 		CalculateGateCapacitance(INV, 1, widthDriverInvN, widthDriverInvP, hDriverInv, tech, &capDriverInvInput, &capDriverInvOutput);
+
+		
 	}
 }
 
@@ -377,6 +389,9 @@ void RowDecoder::CalculateLatency(double _rampInput, double _capLoad1, double _c
 
 		// Output driver or Mux enable circuit
 		if (MUX) {	// Mux enable circuit (NAND + INV) + INV
+
+			// 1.4 update : new latency to allow driver sizing
+
 			// 1st NAND
 			resPullDown = CalculateOnResistance(widthNandN, NMOS, inputParameter.temperature, tech);
 			tr = resPullDown * (capNandOutput + capInvInput);
@@ -384,6 +399,8 @@ void RowDecoder::CalculateLatency(double _rampInput, double _capLoad1, double _c
 			beta = 1 / (resPullDown * gm);
 			readLatency += horowitz(tr, beta, rampNorOutput, &rampNandOutput);
 			writeLatency += horowitz(tr, beta, rampNorOutput, &rampNandOutput);
+			
+			// &capInvInput_final, &capInvOutput_final
 
 			// 2nd INV
 			resPullUp = CalculateOnResistance(widthDriverInvP, PMOS, inputParameter.temperature, tech);
@@ -401,6 +418,8 @@ void RowDecoder::CalculateLatency(double _rampInput, double _capLoad1, double _c
 			readLatency += horowitz(tr, beta, rampInvOutput, &rampOutput);
 			writeLatency += horowitz(tr, beta, rampInvOutput, &rampOutput);
 			rampOutput = rampInvOutput;
+
+
 
 		} else {	// REGULAR: 2 INV as output driver
 			// 1st INV

@@ -139,12 +139,18 @@ void SubArray::Initialize(int _numRow, int _numCol, double _unitWireRes){  //ini
 
 	if (cell.memCellType == Type::SRAM) {  //if array is SRAM
 		if (relaxArrayCellWidth) {  //if want to relax the cell width
-			lengthRow = (double)numCol * MAX(cell.widthInFeatureSize, MIN_CELL_WIDTH) * tech.featureSize;
+
+			// 1.4 update: For SRAM, the height corresponds to the width of the logic layout 
+
+			lengthRow = (double)numCol * MAX(cell.widthInFeatureSize, MIN_CELL_HEIGHT) * tech.featureSize;
 		} else { //if not relax the cell width
 			lengthRow = (double)numCol * cell.widthInFeatureSize * tech.featureSize;
 		}
 		if (relaxArrayCellHeight) {  //if want to relax the cell height
-			lengthCol = (double)numRow * MAX(cell.heightInFeatureSize, MIN_CELL_HEIGHT) * tech.featureSize;
+
+			// 1.4 update: For SRAM, the height corresponds to the width of the logic layout 
+
+			lengthCol = (double)numRow * MAX(cell.heightInFeatureSize, MIN_CELL_WIDTH) * tech.featureSize;
 		} else {  //if not relax the cell height
 			lengthCol = (double)numRow * cell.heightInFeatureSize * tech.featureSize;
 		}

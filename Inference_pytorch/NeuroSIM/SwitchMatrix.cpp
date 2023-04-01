@@ -82,6 +82,16 @@ void SwitchMatrix::Initialize(int _mode, int _numOutput, double _resTg, bool _ne
 	// 1.4 update: no Enlarge Size
 	// EnlargeSize(&widthTgN, &widthTgP, tech.featureSize*MAX_TRANSISTOR_HEIGHT, tech);
 	
+
+	// 1.4 update: recalculate width for FinFET case
+
+	if (tech.featureSize <= 14*1e-9){
+		widthTgN = 2* ceil(widthTgN/tech.featureSize) * tech.featureSize;
+		widthTgP = 2* ceil(widthTgP/tech.featureSize) * tech.featureSize;
+		resTg = 1 / (1/CalculateOnResistance_normal(widthTgN, NMOS, inputParameter.temperature, tech)
+			+ 1/CalculateOnResistance_normal(widthTgP, PMOS, inputParameter.temperature, tech));
+	}
+
 	initialized = true;
 }
 

@@ -559,7 +559,9 @@ void TileCalculatePerformance(const vector<vector<double> > &newMemory, const ve
 			
 			*coreLatencyOther += (inputBufferCM->readLatency + inputBufferCM->writeLatency + outputBufferCM->readLatency + outputBufferCM->writeLatency + hTreeCM->readLatency);
 			*coreEnergyOther += inputBufferCM->readDynamicEnergy + inputBufferCM->writeDynamicEnergy + outputBufferCM->readDynamicEnergy + outputBufferCM->writeDynamicEnergy + hTreeCM->readDynamicEnergy;
-			*leakage = PEleakage*numPE*numPE + accumulationCM->leakage + inputBufferCM->leakage + outputBufferCM->leakage;
+			
+			// 1.4 update : leakage energy of IC 
+			*leakage = PEleakage*numPE*numPE + accumulationCM->leakage + inputBufferCM->leakage + outputBufferCM->leakage + hTreeCM->leakage;
 		}
 	} else {  // novel Mapping
 		for (int i=0; i<numPE; i++) {
@@ -668,7 +670,9 @@ void TileCalculatePerformance(const vector<vector<double> > &newMemory, const ve
 			
 			*coreLatencyOther += (inputBufferNM->readLatency + inputBufferNM->writeLatency + outputBufferNM->readLatency + outputBufferNM->writeLatency + hTreeNM->readLatency);
 			*coreEnergyOther += inputBufferNM->readDynamicEnergy + inputBufferNM->writeDynamicEnergy + outputBufferNM->readDynamicEnergy + outputBufferNM->writeDynamicEnergy + hTreeNM->readDynamicEnergy;
-			*leakage = PEleakage*numPE + accumulationNM->leakage + inputBufferNM->leakage + outputBufferNM->leakage;
+			
+			// 1.4 update: leakage energy of IC
+			*leakage = PEleakage*numPE + accumulationNM->leakage + inputBufferNM->leakage + outputBufferNM->leakage +hTreeNM->leakage;
 		}
 	}
 }

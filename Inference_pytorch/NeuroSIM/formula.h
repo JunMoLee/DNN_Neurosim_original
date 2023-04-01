@@ -53,6 +53,13 @@ double CalculateGateArea(
 		double heightTransistorRegion, Technology tech,
 		double *height, double *width);
 
+// 1.4 update : GAA special layout 
+void CalculateGateCapacitance_GAA(
+		int gateType, int numInput,
+		double widthNMOS, double widthPMOS,
+		double heightTransistorRegion, Technology tech,
+		double *capInput, double *capOutput, double Gatefactor, double Ntuningfactor, double Ptuningfactor);
+
 /* Calculate the capacitance of a logic gate */
 void CalculateGateCapacitance(
 		int gateType, int numInput,

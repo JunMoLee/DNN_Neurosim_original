@@ -73,6 +73,8 @@ void Sigmoid::Initialize(bool _SRAM, int _numYbit, int _numEntry, int _numFuncti
 
 	if (SRAM) { // calculate each memory cell size
 		hUnit = hInv + cell.heightInFeatureSize * tech.featureSize;
+		// 1.4 update?
+		// hUnit = cell.heightInFeatureSize * tech.featureSize;
 		wUnit = MAX(wInv * 3, cell.widthInFeatureSize * tech.featureSize) * numYbit;
 	} else {	// RRAM
 		hUnit = cell.heightInFeatureSize * tech.featureSize;
@@ -280,7 +282,7 @@ void Sigmoid::CalculatePower(double numRead) {
 			leakage += senseAmp.leakage;
 
 			// 1.4 update: precharger, WL energy, BL energy?
-			// sram.CalculatePower(1);
+			// sramWriteDriver.CalculatePower(1);
 			// leakage += precharger.leakage;
 			// leakage += sramWriteDriver.leakage;
 			

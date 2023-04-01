@@ -386,7 +386,7 @@ double HTree::GetUnitLengthRes(double wireLength) {
 
 	if (wireLength/tech.featureSize >= 100000) {
 		wireWidth = 4*param->wireWidth;
-	} else if (10000 <= wireLength/tech.featureSize <= 100000) {
+	} else if ((10000 <= wireLength/tech.featureSize) && (wireLength/tech.featureSize<= 100000)) {
 		wireWidth = 2*param->wireWidth;
 	} else {
 		wireWidth = 1*param->wireWidth;
@@ -415,7 +415,8 @@ double HTree::GetUnitLengthRes(double wireLength) {
 	} else if ((12 <= wireWidth) &&  (wireWidth < 15)){
 		AR = 2.00; Rho = 5.8*1e-8; 
 	} else if ((10 <= wireWidth) &&  (wireWidth < 12)){
-		AR = 3.00; Rho = 6.65*1e-8; 
+		// AR = 3.00; Rho = 6.65*1e-8; 
+		AR = 2.00; Rho = 6.61*1e-8;
 	} else if ((8 <= wireWidth) &&  (wireWidth < 10)){
 		AR = 3.00; Rho = 7.87*1e-8; 
 	} else {

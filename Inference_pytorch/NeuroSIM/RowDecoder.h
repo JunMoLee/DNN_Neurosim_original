@@ -78,6 +78,11 @@ public:
 	DecoderMode mode;	// ROW or COLUMN mode
 	bool MUX;	// MUX mode
 	bool parallel;    // for mux decoder of parallel reading mode
+
+	// 1.4 update: final driver width 
+	double widthInvN_final, widthInvP_final;
+	double capInvInput_final, capInvOutput_final;
+	
 };
 
 #endif /* ROWDECODER_H_ */

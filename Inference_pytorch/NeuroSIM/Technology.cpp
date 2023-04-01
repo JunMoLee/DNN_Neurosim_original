@@ -54,13 +54,13 @@ void Technology::Initialize(int _featureSizeInNano, DeviceRoadmap _deviceRoadmap
 
 	// 1.4 update : capacitance/oncurrent values for 14 nm and beyond (easy look-up purpose)
 
-	double caplist [7] = {104.381,97.549,100.497,82.2372,72.5727, 83.916, 69.369};
+	double caplist [7] = {103.816,97.549,100.497,81.859,72.572, 75.992, 69.369};
 	double currentlist [7] = {590.014, 599.237, 562.048, 578.494, 641.463, 540.693, 556.448};
-	double currentlist_off [7] = {0.0001,0.000127, 0.000147, 0.000138, 0.000158, 0.0000714, 0.000569}; //0.000267
-	double eff_res_mul [7] = {1.94, 2.09, 2.05, 2.04, 2.13, 1.9, 2.02};
+	double currentlist_off [7] = {0.0001,0.000127, 0.000147, 0.000138, 0.000158, 0.0000733, 0.000569}; //0.000267
+	double eff_res_mul [7] = {2.09, 2.09, 2.05, 2.10, 2.14, 1.98, 2.03};
 	double gm [7] = {1415.34, 1803.50, 1785.37, 1820.90, 2018.04, 1968.85, 2613.95};
 	double vth_list [7] = {0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1}; // dummy values, since we don't need them
-	double cap_draintotallist [7] = {2.499e-17, 2.668e-17, 2.224e-17, 2.076e-17, 1.791e-17, 1.543e-17, 1.348e-17};
+	double cap_draintotallist [7] = {2.499e-17, 2.668e-17, 2.224e-17, 2.073e-17, 1.791e-17, 1.484e-17, 1.348e-17};
 
 	// test 
 	featureSizeInNano = _featureSizeInNano;
@@ -1679,13 +1679,13 @@ void Technology::Initialize(int _featureSizeInNano, DeviceRoadmap _deviceRoadmap
 
 	// 1.4 update: junction capacitance for 14 nm and beyond; 
 
-	if (featureSizeInNano == 14 ) capJunction= 0.012003;
-	else if (featureSizeInNano == 10 ) capJunction= 0.013297;
-	else if (featureSizeInNano== 7 ) capJunction= 0.013511;
-	else if (featureSizeInNano == 5 ) capJunction= 0.011894;
-	else if (featureSizeInNano == 3 ) capJunction= 0.012887;
-	else if (featureSizeInNano == 2 ) capJunction= 0.009179;
-	else if (featureSizeInNano == 1 ) capJunction= 0.010155;
+	if (featureSizeInNano == 14 ) capJunction= 0.0120;
+	else if (featureSizeInNano == 10 ) capJunction= 0.0134;
+	else if (featureSizeInNano== 7 ) capJunction= 0.0137;
+	else if (featureSizeInNano == 5 ) capJunction= 0.0119;
+	else if (featureSizeInNano == 3 ) capJunction= 0.0128;
+	else if (featureSizeInNano == 2 ) capJunction= 0.0091;
+	else if (featureSizeInNano == 1 ) capJunction= 0.0113;
 	else capJunction = cjd / pow(1 + vdd / buildInPotential, mjd);
 
 	/* Properties not used so far */

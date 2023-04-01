@@ -544,7 +544,9 @@ double ProcessingUnitCalculatePerformance(SubArray *subArray, const vector<vecto
 			}				
 			*bufferDynamicEnergy += bufferInputNM->readDynamicEnergy + bufferOutputNM->readDynamicEnergy;
 			*icDynamicEnergy += busInputNM->readDynamicEnergy + busOutputNM->readDynamicEnergy;
-			*leakage = subArrayLeakage*numSubArrayRow*numSubArrayCol + adderTreeNM->leakage + bufferInputNM->leakage + bufferOutputNM->leakage;
+
+			// 1.4 update: leakage energy of interconnect
+			*leakage = subArrayLeakage*numSubArrayRow*numSubArrayCol + adderTreeNM->leakage + bufferInputNM->leakage + bufferOutputNM->leakage + busInputNM->leakage + busOutputNM->leakage;
 		} else {
 			bufferInputCM->CalculateLatency(0, weightMatrixRow/param->numRowPerSynapse*numInVector/(bufferInputCM->numDff));
 			bufferOutputCM->CalculateLatency(0, weightMatrixCol/param->numColPerSynapse*adderTreeCM->numAdderBit*numInVector/param->numBitInput/(bufferOutputCM->numDff));
@@ -568,7 +570,9 @@ double ProcessingUnitCalculatePerformance(SubArray *subArray, const vector<vecto
 			}
 			*bufferDynamicEnergy += bufferInputCM->readDynamicEnergy + bufferOutputCM->readDynamicEnergy;
 			*icDynamicEnergy += busInputCM->readDynamicEnergy + busOutputCM->readDynamicEnergy;
-			*leakage = subArrayLeakage*numSubArrayRow*numSubArrayCol + adderTreeCM->leakage + bufferInputCM->leakage + bufferOutputCM->leakage;
+
+			// 1.4 update : leakage energy of IC
+			*leakage = subArrayLeakage*numSubArrayRow*numSubArrayCol + adderTreeCM->leakage + bufferInputCM->leakage + bufferOutputCM->leakage + busInputCM->leakage + busOutputCM->leakage;
 		}
 		*readLatency += (*bufferLatency) + (*icLatency);	
 		*readDynamicEnergy += (*bufferDynamicEnergy) + (*icDynamicEnergy);
