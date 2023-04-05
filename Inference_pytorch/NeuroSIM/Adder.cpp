@@ -73,6 +73,7 @@ void Adder::CalculateArea(double _newHeight, double _newWidth, AreaModify _optio
 	} else {
 		double hNand, wNand;
 		
+		// 1.4 update: GAA special layout
 		if ((tech.featureSize <= 2e-9) && param->speciallayout) {CalculateGateArea(NAND, 2, MIN_NMOS_SIZE * tech.featureSize, MIN_NMOS_SIZE * tech.featureSize, tech.featureSize * MAX_TRANSISTOR_HEIGHT, tech, &hNand, &wNand);}
 		else {CalculateGateArea(NAND, 2, widthNandN, widthNandP, tech.featureSize * MAX_TRANSISTOR_HEIGHT, tech, &hNand, &wNand);}
 		
@@ -123,6 +124,7 @@ void Adder::CalculateArea(double _newHeight, double _newWidth, AreaModify _optio
 				break;
 		}
 		
+		// 1.4 update: GAA special layout
 		if ((tech.featureSize == 2e-9) && param->speciallayout) { 
 			CalculateGateCapacitance_GAA(NAND, 2, MIN_NMOS_SIZE * tech.featureSize, MIN_NMOS_SIZE * tech.featureSize, hNand, tech, &capNandInput, &capNandOutput, 1.0, 22.0/15.0, 8.0/15.0); }
 	    else if ((tech.featureSize == 1e-9) && param->speciallayout) {
@@ -149,6 +151,7 @@ void Adder::CalculateLatency(double _rampInput, double _capLoad, double numRead)
 		
 		ramp[0] = rampInput;
 
+		// 1.4 update: GAA special layout
 		// Calibration data pattern is A=1111111..., B=1000000... and Cin=1
 		// 1st
 		resPullDown = CalculateOnResistance(widthNandN, NMOS, inputParameter.temperature, tech) * 2;

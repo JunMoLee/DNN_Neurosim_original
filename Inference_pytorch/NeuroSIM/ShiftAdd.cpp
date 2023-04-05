@@ -91,6 +91,8 @@ void ShiftAdd::CalculateArea(double _newHeight, double _newWidth, AreaModify _op
 		cout << "[ShiftAdd] Error: Require initialization first!" << endl;
 	} else {
 		double hInv, wInv, hNand, wNand;
+
+		// 1.4 update: GAA special layout
 		if ((tech.featureSize <= 2e-9) && param->speciallayout) {		// INV
 			CalculateGateArea(INV, 1, widthInvN, widthInvP, tech.featureSize * MAX_TRANSISTOR_HEIGHT, tech, &hInv, &wInv);
 			// NAND2
