@@ -97,7 +97,7 @@ public:
 	double sizingfactor_WLdecoder= 1; 
 
 	// 1.4 update: Special layout
-	double speciallayout=0;
+	double speciallayout;
 };
 
 #endif

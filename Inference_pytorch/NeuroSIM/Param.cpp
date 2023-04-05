@@ -55,7 +55,7 @@ using namespace std;
 
 Param::Param() {
 	/***************************************** user defined design options and parameters *****************************************/
-	operationmode = 2;     		// 1: conventionalSequential (Use several multi-bit RRAM as one synapse)
+	operationmode = 1;     		// 1: conventionalSequential (Use several multi-bit RRAM as one synapse)
 								// 2: conventionalParallel (Use several multi-bit RRAM as one synapse)
 	
 	memcelltype = 1;        	// 1: cell.memCellType = Type::SRAM
@@ -131,13 +131,16 @@ Param::Param() {
 	// 1.4 update: Activation implementation option added
 	Activationtype=false; // true: SRAM, False: RRAM
 
+	// 1.4 update: special layout
+	speciallayout=1;
+
 	// 1.4 update
 	sizingfactor_MUX=1; // sizing for the final driver of mux in rowdecoder.cpp (important for technology scaling)
 	sizingfactor_WLdecoder=1; // sizing for the final driver of WLdecoder in rowdecoder.cpp (important for technology scaling)
 
 // For Linux Automation (test for 1.4 update)
 const int 
-tech=13
+tech=11
 ;
 
 	// 1.4 update: new technology node added
@@ -350,20 +353,27 @@ tech=13
 
 	// 1.4 update: wirewidth
 	if (wireWidth >= 175) {
-		AR = 1.6; Rho = 2.01*1e-8;
+		AR = 1.6; 
+		Rho = 2.01*1e-8;
 	} else if ((110 <= wireWidth) &&  (wireWidth < 175)) {
-		AR = 1.6; Rho = 2.20*1e-8;
+		AR = 1.6; 
+		Rho = 2.20*1e-8;
 	} else if ((105 <= wireWidth) &&  (wireWidth < 110)) {
-		AR = 1.7; Rho = 2.21*1e-8;
+		AR = 1.7; 
+		Rho = 2.21*1e-8;
 	} else if ((80 <= wireWidth) &&  (wireWidth < 105)){
-		AR = 1.7; Rho = 2.37*1e-8;
+		AR = 1.7; 
+		Rho = 2.37*1e-8;
 	} else if ((56 <= wireWidth) &&  (wireWidth < 80)){
-		AR = 1.8; Rho = 2.63*1e-8;
+		AR = 1.8; 
+		Rho = 2.63*1e-8;
 	} else if ((40 <= wireWidth) &&  (wireWidth < 56)) {
-		AR = 1.9; Rho = 2.97*1e-8;
-	} else if ((26 <= wireWidth) &&  (wireWidth < 40)) {
-		AR = 2.0; Rho = 3.6*1e-8;
-	} else if ((22 <= wireWidth) &&  (wireWidth < 26)){
+		AR = 1.9; 
+		Rho = 2.97*1e-8;
+	} else if ((32 <= wireWidth) &&  (wireWidth < 40)) {
+		AR = 2.0; 
+		Rho = 3.25*1e-8;
+	} else if ((22 <= wireWidth) &&  (wireWidth < 32)){
 		AR = 2.00; Rho = 3.95*1e-8;
 	} else if ((20 <= wireWidth) &&  (wireWidth < 22)){
 		AR = 2.00; Rho = 4.17*1e-8; 
@@ -380,23 +390,29 @@ tech=13
 		exit(-1); puts("Wire width out of range"); 
 	}
 
-
 	// 1.4 update: Metal0
 	if (Metal0 >= 175) {
-		AR_Metal0 = 1.6; Rho_Metal0 = 2.01*1e-8;
+		AR_Metal0 = 1.6; 
+		Rho_Metal0 = 2.01*1e-8;
 	} else if ((110 <= Metal0) &&  (Metal0< 175)) {
-		AR_Metal0 = 1.6; Rho_Metal0 = 2.20*1e-8;
+		AR_Metal0 = 1.6; 
+		Rho_Metal0 = 2.20*1e-8;
 	} else if ((105 <= Metal0) &&  (Metal0< 110)){
-		AR_Metal0 = 1.7; Rho_Metal0 = 2.21*1e-8;
+		AR_Metal0 = 1.7; 
+		Rho_Metal0 = 2.21*1e-8;
 	} else if ((80 <= Metal0) &&  (Metal0< 105)) {
-		AR_Metal0 = 1.7; Rho_Metal0 = 2.37*1e-8;
+		AR_Metal0 = 1.7; 
+		Rho_Metal0 = 2.37*1e-8;
 	} else if ((56 <= Metal0) &&  (Metal0< 80)){
-		AR_Metal0 = 1.8; Rho_Metal0 = 2.63*1e-8;
+		AR_Metal0 = 1.8; 
+		Rho_Metal0 = 2.63*1e-8;
 	} else if ((40 <= Metal0) &&  (Metal0< 56)) {
-		AR_Metal0 = 1.9; Rho_Metal0 = 2.97*1e-8;
-	} else if ((26 <= Metal0) &&  (Metal0< 40)) {
-		AR_Metal0 = 2.0; Rho_Metal0 = 3.6*1e-8;
-	} else if ((22 <= Metal0) &&  (Metal0< 26)){
+		AR_Metal0 = 1.9; 
+		Rho_Metal0 = 2.97*1e-8;
+	} else if ((32 <= Metal0) &&  (Metal0< 40)) {
+		AR_Metal0 = 2.0; 
+		Rho_Metal0 = 3.25*1e-8;
+	} else if ((22 <= Metal0) &&  (Metal0< 32)){
 		AR_Metal0 = 2.00; Rho_Metal0 = 3.95*1e-8;
 	} else if ((20 <= Metal0) &&  (Metal0< 22)){
 		AR_Metal0 = 2.00; Rho_Metal0 = 4.17*1e-8; 
@@ -406,7 +422,7 @@ tech=13
 		AR_Metal0 = 2.00; Rho_Metal0 = 5.8*1e-8; 
 	} else if ((10 <= Metal0) &&  (Metal0< 12)){
 		// AR_Metal0 = 3.00; Rho_Metal0 = 6.65*1e-8; 
-		AR_Metal0 = 2.00; Rho_Metal0 = 6.61*1e-8;  
+		AR_Metal0 = 2.00; Rho_Metal0 = 6.61*1e-8; 
 	} else if ((8 <= Metal0) &&  (Metal0< 10)){
 		AR_Metal0 = 3.00; Rho_Metal0 = 7.87*1e-8; 
 	} else {
@@ -415,20 +431,27 @@ tech=13
 	
 	// 1.4 update: Metal1
 	if (Metal1 >= 175) {
-		AR_Metal1 = 1.6; Rho_Metal1 = 2.01*1e-8;
+		AR_Metal1 = 1.6; 
+		Rho_Metal1 = 2.01*1e-8;
 	} else if ((110 <= Metal1) &&  (Metal1 < 175)) {
-		AR_Metal1 = 1.6; Rho_Metal1 = 2.20*1e-8;
+		AR_Metal1 = 1.6; 
+		Rho_Metal1 = 2.20*1e-8;
 	} else if ((105 <= Metal1) &&  (Metal1 < 110)) {
-		AR_Metal1 = 1.7; Rho_Metal1 = 2.21*1e-8;
+		AR_Metal1 = 1.7; 
+		Rho_Metal1 = 2.21*1e-8;
 	} else if ((80 <= Metal1) &&  (Metal1 <105)) {
-		AR_Metal1 = 1.7; Rho_Metal1 = 2.37*1e-8;
+		AR_Metal1 = 1.7; 
+		Rho_Metal1 = 2.37*1e-8;
 	} else if ((56 <= Metal1) &&  (Metal1 < 80)) {
-		AR_Metal1 = 1.8; Rho_Metal1 = 2.63*1e-8;
+		AR_Metal1 = 1.8; 
+		Rho_Metal1 = 2.63*1e-8;
 	} else if ((40 <= Metal1) &&  (Metal1 < 56)){
-		AR_Metal1 = 1.9; Rho_Metal1 = 2.97*1e-8;
-	} else if ((26 <= Metal1) &&  (Metal1 < 40)) {
-		AR_Metal1 = 2.0; Rho_Metal1 = 3.6*1e-8;
-	} else if ((22 <= Metal1) &&  (Metal1 < 26)){
+		AR_Metal1 = 1.9; 
+		Rho_Metal1 = 2.97*1e-8;
+	} else if ((32 <= Metal1) &&  (Metal1 < 40)) {
+		AR_Metal1 = 2.0; 
+		Rho_Metal1 = 3.25*1e-8;
+	} else if ((22 <= Metal1) &&  (Metal1 < 32)){
 		AR_Metal1 = 2.00; Rho_Metal1 = 3.95*1e-8;
 	} else if ((20 <= Metal1) &&  (Metal1 < 22)){
 		AR_Metal1 = 2.00; Rho_Metal1 = 4.17*1e-8; 

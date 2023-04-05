@@ -224,7 +224,7 @@ void RowDecoder::CalculateArea(double _newHeight, double _newWidth, AreaModify _
 				height = _newHeight;
 				width = wInv * numColInv + wNand * numColNand + Metal3_pitch * numMetalConnection * tech.featureSize + wNor * numColNor;
 				if (MUX) {    // Mux enable circuit (NAND + INV) + INV
-					width += (wNand + wInv * 2) * numColNor;
+					width += (wNand + wDriverInv * 2) * numColNor; // 1.4 update: fixed
 				} else {    // REGULAR: 2 INV as output driver
 					width += (wDriverInv * 2) * numColNor;
 				}
@@ -273,7 +273,7 @@ void RowDecoder::CalculateArea(double _newHeight, double _newWidth, AreaModify _
 				width = _newWidth;
 				height = hInv * numRowInv + hNand * numRowNand + Metal2_pitch * numMetalConnection * tech.featureSize + hNor * numRowNor;
 				if (MUX) {    // Mux enable circuit (NAND + INV) + INV
-					height += (hNand + hInv * 2) * numRowNor;
+					height += (hNand + hDriverInv * 2) * numRowNor; // 1.4 update : fixed
 				} else {    // REGULAR: 2 INV as output driver
 					height += (hDriverInv * 2) * numRowNor;
 				}

@@ -72,11 +72,11 @@ void Adder::CalculateArea(double _newHeight, double _newWidth, AreaModify _optio
 		cout << "[Adder] Error: Require initialization first!" << endl;
 	} else {
 		double hNand, wNand;
+		
 		if ((tech.featureSize <= 2e-9) && param->speciallayout) {CalculateGateArea(NAND, 2, MIN_NMOS_SIZE * tech.featureSize, MIN_NMOS_SIZE * tech.featureSize, tech.featureSize * MAX_TRANSISTOR_HEIGHT, tech, &hNand, &wNand);}
 		else {CalculateGateArea(NAND, 2, widthNandN, widthNandP, tech.featureSize * MAX_TRANSISTOR_HEIGHT, tech, &hNand, &wNand);}
+		
 
-		// NAND2
-		CalculateGateArea(NAND, 2, widthNandN, widthNandP, tech.featureSize * MAX_TRANSISTOR_HEIGHT, tech, &hNand, &wNand);
 		area = 0;
 		height = 0;
 		width = 0;

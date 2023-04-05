@@ -404,9 +404,9 @@ double HTree::GetUnitLengthRes(double wireLength) {
 		AR = 1.8; Rho = 2.63*1e-8;
 	} else if ((40 <= wireWidth) &&  (wireWidth < 56)) {
 		AR = 1.9; Rho = 2.97*1e-8;
-	} else if ((26 <= wireWidth) &&  (wireWidth < 40)) {
-		AR = 2.0; Rho = 3.6*1e-8;
-	} else if ((22 <= wireWidth) &&  (wireWidth < 26)){
+	} else if ((32 <= wireWidth) &&  (wireWidth < 40)) {
+		AR = 2.0; Rho = 3.25*1e-8;
+	} else if ((22 <= wireWidth) &&  (wireWidth < 32)){
 		AR = 2.00; Rho = 3.95*1e-8;
 	} else if ((20 <= wireWidth) &&  (wireWidth < 22)){
 		AR = 2.00; Rho = 4.17*1e-8; 

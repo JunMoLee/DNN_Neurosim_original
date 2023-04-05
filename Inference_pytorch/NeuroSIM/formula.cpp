@@ -81,14 +81,14 @@ double CalculateGateArea(	// Calculate layout area and width of logic gate given
 	
 		if (tech.featureSize > 2 * 1e-9) { // 1.4 update: for FinFET case
 
-			widthNMOS *= 1/(2 * tech.featureSize); 
-			widthPMOS *= 1/(2 * tech.featureSize);  
+			widthNMOS = widthNMOS * 1/(2 * tech.featureSize); 
+			widthPMOS = widthPMOS *1/(2 * tech.featureSize);  
 		}
 
 		else if (tech.featureSize <= 2 * 1e-9) { // 1.4 update: for GAA case
 
-		widthNMOS *= 1/(2 * tech.featureSize); // earn the fin number
-		widthPMOS *= 1/(2 * tech.featureSize); // earn the fin number
+		widthNMOS = widthNMOS *1/(2 * tech.featureSize); // earn the fin number
+		widthPMOS = widthPMOS *1/(2 * tech.featureSize); // earn the fin number
 
 		}
 
