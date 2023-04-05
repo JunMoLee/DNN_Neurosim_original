@@ -68,7 +68,9 @@ void DecoderDriver::Initialize(int _mode, int _numOutput /* # of array rows/colu
 				* tech.featureSize / (resTg*2);
 	widthTgP = CalculateOnResistance_normal( ((tech.featureSize <= 14*1e-9)? 2:1) * tech.featureSize, PMOS, inputParameter.temperature, tech)
 				* tech.featureSize / (resTg*2);
-	
+	resTg = 1 / (1/CalculateOnResistance_normal(widthTgN, NMOS, inputParameter.temperature, tech)
+			+ 1/CalculateOnResistance_normal(widthTgP, PMOS, inputParameter.temperature, tech));
+
 	initialized = true;
 }
 
