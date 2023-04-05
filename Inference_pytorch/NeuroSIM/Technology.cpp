@@ -60,7 +60,7 @@ void Technology::Initialize(int _featureSizeInNano, DeviceRoadmap _deviceRoadmap
 	double eff_res_mul [7] = {2.09, 2.09, 2.05, 2.10, 2.14, 1.98, 2.03};
 	double gm [7] = {1415.34, 1803.50, 1785.37, 1820.90, 2018.04, 1968.85, 2401.75};
 	double vth_list [7] = {0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1}; // dummy values, since we don't need them
-	double cap_draintotallist [7] = {2.499e-17, 2.668e-17, 2.224e-17, 2.076e-17, 1.791e-17, 1.543e-17, 1.348e-17};
+	double cap_draintotallist [7] = {2.499e-17, 2.668e-17, 2.224e-17, 2.076e-17, 1.791e-17, 1.543e-17, 1.409e-17};
 
 	// test 
 	featureSizeInNano = _featureSizeInNano;
@@ -1685,7 +1685,7 @@ void Technology::Initialize(int _featureSizeInNano, DeviceRoadmap _deviceRoadmap
 	else if (featureSizeInNano == 5 ) capJunction= 0.0119;
 	else if (featureSizeInNano == 3 ) capJunction= 0.0128;
 	else if (featureSizeInNano == 2 ) capJunction= 0.0091;
-	else if (featureSizeInNano == 1 ) capJunction= 0.0113;
+	else if (featureSizeInNano == 1 ) capJunction= 0.0102;
 	else capJunction = cjd / pow(1 + vdd / buildInPotential, mjd);
 
 	/* Properties not used so far */
