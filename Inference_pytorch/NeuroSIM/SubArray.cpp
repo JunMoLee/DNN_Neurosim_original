@@ -1217,6 +1217,9 @@ void SubArray::CalculatePower(const vector<double> &columnResistance) {
 				// 1.4 update: read energy update
 				readDynamicEnergyArray = capRow1 * tech.vdd * tech.vdd * (numRow) * activityRowRead; // added for WL/BL discharging
 				
+				// 1.4 update: iterate for numColMuxed
+				readDynamicEnergyArray *= numColMuxed;
+
 				// 1.4 update: WL energy for write + modification (assuming toggling of SRAM bit at every write, each Q/Qbar consumes half CVdd^2)
 				writeDynamicEnergyArray = cell.capSRAMCell * tech.vdd * tech.vdd * numCol * activityColWrite * numRow * activityRowWrite;    // flip Q and Q_bar
 				writeDynamicEnergyArray += capRow1 * tech.vdd * tech.vdd * (numRow) * activityRowWrite;

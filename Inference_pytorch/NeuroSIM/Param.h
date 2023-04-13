@@ -98,6 +98,9 @@ public:
 
 	// 1.4 update: Special layout
 	double speciallayout;
+
+	// 1.4 update: barrier thickness
+	double barrierthickness= 0;
 };
 
 #endif

@@ -66,21 +66,27 @@ void HTree::Initialize(int _numRow, int _numCol, double _delaytolerance, double 
 
 	numStage = 2*ceil(log2((double) max(numRow, numCol)))+1;   // vertical has N stage, horizontal has N+1 stage
 	unitLengthWireResistance = param->unitLengthWireResistance;
-	unitLengthWireCap = 0.2e-15/1e-6;;   // 0.2 fF/mm
+
+	
+	unitLengthWireCap = 0.2e-15/1e-6;
 	
 	// define min INV resistance and capacitance to calculate repeater size
 	widthMinInvN = MIN_NMOS_SIZE * tech.featureSize;
 	widthMinInvP = tech.pnSizeRatio * MIN_NMOS_SIZE * tech.featureSize;
 	CalculateGateArea(INV, 1, widthMinInvN, widthMinInvP, tech.featureSize * MAX_TRANSISTOR_HEIGHT, tech, &hMinInv, &wMinInv);
 	CalculateGateCapacitance(INV, 1, widthMinInvN, widthMinInvP, hMinInv, tech, &capMinInvInput, &capMinInvOutput);
-	double resOnRep = CalculateOnResistance(widthMinInvN, NMOS, inputParameter.temperature, tech) + CalculateOnResistance(widthMinInvP, PMOS, inputParameter.temperature, tech);
+
+	// 1.4 update: change the formula
+	double resOnRep = (CalculateOnResistance(widthMinInvN, NMOS, inputParameter.temperature, tech) + CalculateOnResistance(widthMinInvP, PMOS, inputParameter.temperature, tech))/2;
 	// optimal repeater design to achieve highest speed
 	repeaterSize = floor((double)sqrt( (double) resOnRep*unitLengthWireCap/capMinInvInput/unitLengthWireResistance));
 	minDist = sqrt(2*resOnRep*(capMinInvOutput+capMinInvInput)/(unitLengthWireResistance*unitLengthWireCap));
 	CalculateGateArea(INV, 1, MIN_NMOS_SIZE * tech.featureSize * repeaterSize, tech.pnSizeRatio * MIN_NMOS_SIZE * tech.featureSize * repeaterSize, tech.featureSize * MAX_TRANSISTOR_HEIGHT, tech, &hRep, &wRep);
 	CalculateGateCapacitance(INV, 1, MIN_NMOS_SIZE * tech.featureSize * repeaterSize, tech.pnSizeRatio * MIN_NMOS_SIZE * tech.featureSize * repeaterSize, hRep, tech, &capRepInput, &capRepOutput);
-	resOnRep = CalculateOnResistance(MIN_NMOS_SIZE * tech.featureSize * repeaterSize, NMOS, inputParameter.temperature, tech) + CalculateOnResistance(tech.pnSizeRatio * MIN_NMOS_SIZE * tech.featureSize * repeaterSize, PMOS, inputParameter.temperature, tech);
-	double minUnitLengthDelay = 0.7*(resOnRep*(capRepInput+capRepOutput+unitLengthWireCap*minDist)+0.5*unitLengthWireResistance*minDist*unitLengthWireCap*minDist+unitLengthWireResistance*minDist*capRepInput)/minDist;
+	
+	// 1.4 update: change the formula
+	resOnRep = (CalculateOnResistance(MIN_NMOS_SIZE * tech.featureSize * repeaterSize, NMOS, inputParameter.temperature, tech) + CalculateOnResistance(tech.pnSizeRatio * MIN_NMOS_SIZE * tech.featureSize * repeaterSize, PMOS, inputParameter.temperature, tech))/2;
+	double minUnitLengthDelay = 0.7*(resOnRep*(capRepInput+capRepOutput+unitLengthWireCap*minDist)+0.38*unitLengthWireResistance*minDist*unitLengthWireCap*minDist+unitLengthWireResistance*minDist*capRepInput)/minDist;
 	double maxUnitLengthEnergy = (capRepInput+capRepOutput+unitLengthWireCap*minDist)*tech.vdd*tech.vdd/minDist;
 	
 	if (delaytolerance) {   // tradeoff: increase delay to decrease energy
@@ -91,8 +97,9 @@ void HTree::Initialize(int _numRow, int _numCol, double _delaytolerance, double 
 			minDist *= 0.9;
 			CalculateGateArea(INV, 1, MIN_NMOS_SIZE * tech.featureSize * repeaterSize, tech.pnSizeRatio * MIN_NMOS_SIZE * tech.featureSize * repeaterSize, tech.featureSize * MAX_TRANSISTOR_HEIGHT, tech, &hRep, &wRep);
 			CalculateGateCapacitance(INV, 1, MIN_NMOS_SIZE * tech.featureSize * repeaterSize, tech.pnSizeRatio * MIN_NMOS_SIZE * tech.featureSize * repeaterSize, hRep, tech, &capRepInput, &capRepOutput);
-			resOnRep = CalculateOnResistance(MIN_NMOS_SIZE * tech.featureSize * repeaterSize, NMOS, inputParameter.temperature, tech) + CalculateOnResistance(tech.pnSizeRatio * MIN_NMOS_SIZE * tech.featureSize * repeaterSize, PMOS, inputParameter.temperature, tech);
-			delay = 0.7*(resOnRep*(capRepInput+capRepOutput+unitLengthWireCap*minDist)+0.5*unitLengthWireResistance*minDist*unitLengthWireCap*minDist+unitLengthWireResistance*minDist*capRepInput)/minDist;
+			// 1.4 update: change the formula
+			resOnRep = (CalculateOnResistance(MIN_NMOS_SIZE * tech.featureSize * repeaterSize, NMOS, inputParameter.temperature, tech) + CalculateOnResistance(tech.pnSizeRatio * MIN_NMOS_SIZE * tech.featureSize * repeaterSize, PMOS, inputParameter.temperature, tech))/2;
+			delay = 0.7*(resOnRep*(capRepInput+capRepOutput+unitLengthWireCap*minDist)+0.38*unitLengthWireResistance*minDist*unitLengthWireCap*minDist+unitLengthWireResistance*minDist*capRepInput)/minDist;
 			energy = (capRepInput+capRepOutput+unitLengthWireCap*minDist)*tech.vdd*tech.vdd/minDist;
 		}
 	}
@@ -100,6 +107,7 @@ void HTree::Initialize(int _numRow, int _numCol, double _delaytolerance, double 
 	widthInvN = MAX(1,repeaterSize) * MIN_NMOS_SIZE * tech.featureSize;
 	widthInvP = MAX(1,repeaterSize) * tech.pnSizeRatio * MIN_NMOS_SIZE * tech.featureSize;
 	
+
 	/*** define center point ***/
 	x_center = floor(log2((double) min(numRow, numCol)));
 	y_center = floor(log2((double) min(numRow, numCol)));
@@ -392,37 +400,62 @@ double HTree::GetUnitLengthRes(double wireLength) {
 		wireWidth = 1*param->wireWidth;
 	}
 	
+
+	// 1.4 update 
+	double barrierthickness=0;
+
 	if (wireWidth >= 175) {
-		AR = 1.6; Rho = 2.01*1e-8;
-	} else if ((110 <= wireWidth) &&  (wireWidth < 175)) {
-		AR = 1.6; Rho = 2.20*1e-8;
-	} else if ((105 <= wireWidth) &&  (wireWidth < 110)) {
-		AR = 1.7; Rho = 2.21*1e-8;
-	} else if ((80 <= wireWidth) &&  (wireWidth < 105)){
-		AR = 1.7; Rho = 2.37*1e-8;
-	} else if ((56 <= wireWidth) &&  (wireWidth < 80)){
-		AR = 1.8; Rho = 2.63*1e-8;
-	} else if ((40 <= wireWidth) &&  (wireWidth < 56)) {
-		AR = 1.9; Rho = 2.97*1e-8;
-	} else if ((32 <= wireWidth) &&  (wireWidth < 40)) {
-		AR = 2.0; Rho = 3.25*1e-8;
-	} else if ((22 <= wireWidth) &&  (wireWidth < 32)){
-		AR = 2.00; Rho = 3.95*1e-8;
-	} else if ((20 <= wireWidth) &&  (wireWidth < 22)){
-		AR = 2.00; Rho = 4.17*1e-8; 
-	} else if ((15 <= wireWidth) &&  (wireWidth < 20)){
-		AR = 2.00; Rho = 4.98*1e-8; 
-	} else if ((12 <= wireWidth) &&  (wireWidth < 15)){
-		AR = 2.00; Rho = 5.8*1e-8; 
-	} else if ((10 <= wireWidth) &&  (wireWidth < 12)){
-		// AR = 3.00; Rho = 6.65*1e-8; 
-		AR = 2.00; Rho = 6.61*1e-8;
-	} else if ((8 <= wireWidth) &&  (wireWidth < 10)){
-		AR = 3.00; Rho = 7.87*1e-8; 
+		AR = 1.6; 
+		Rho = 2.01e-8;
+		barrierthickness = 10.0e-9 ;
+	} else if ((110 <= wireWidth ) && (wireWidth < 175)) {
+		AR = 1.6; 
+		Rho = 2.20e-8;
+		barrierthickness = 10.0e-9 ;
+	} else if ((105 <= wireWidth) && (wireWidth< 110)) {
+		AR = 1.7; 
+		Rho = 2.21e-8;
+		barrierthickness = 7.0e-9 ;
+	} else if ((80 <= wireWidth) && (wireWidth<105)) {
+		AR = 1.7; 
+		Rho = 2.37e-8;
+		barrierthickness = 5.0e-9 ;
+	} else if ((56 <= wireWidth) &&   (wireWidth<80)) {
+		AR = 1.8; 
+		Rho = 2.63e-8;
+		barrierthickness = 4.0e-9 ; 
+	} else if ((40 <= wireWidth) &&  (wireWidth<56)) {
+		AR = 1.9; 
+		Rho = 2.97e-8;
+		barrierthickness = 2.5e-9 ;
+	} else if ((32 <= wireWidth) &&  (wireWidth< 40)) {
+		AR = 2.0; 
+		Rho = 3.25e-8;
+		barrierthickness = 2.5e-9 ;
+	} else if ((22 <= wireWidth) && (wireWidth< 32)){
+		AR = 2.00; Rho = 3.95e-8;
+		barrierthickness = 2.0e-9 ;
+	} else if ((20 <= wireWidth) && (wireWidth< 22)){
+		AR = 2.00; Rho = 4.17e-8; 
+		barrierthickness = 2.0e-9 ;
+	} else if ((15 <= wireWidth) && (wireWidth< 20)){
+		AR = 2.00; Rho = 4.98e-8; 
+		barrierthickness = 2.0e-9 ; 
+	} else if ((12 <= wireWidth) && (wireWidth< 15)){
+		AR = 2.00; Rho = 5.8e-8; 
+		 barrierthickness = 1.5e-9 ;
+	} else if ((10 <= wireWidth) && (wireWidth< 12)){
+		AR = 3.00; Rho = 6.65e-8; 
+		barrierthickness = 0.5e-9 ;
+	} else if ((8 <= wireWidth) && (wireWidth< 10)){
+		AR = 3.00; Rho = 7.87e-8; 
+		barrierthickness = 0.2e-9 ;
 	} else {
 		exit(-1); puts("Wire width out of range"); 
 	}
 
+	Rho = Rho * 1 / (1- ( (2*AR*wireWidth + wireWidth)*barrierthickness / (AR*pow(wireWidth,2) ) ));
+	
 
 	Rho *= (1+0.00451*(param->temp-300));
 	if (wireWidth == -1) {

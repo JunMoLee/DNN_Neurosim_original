@@ -161,25 +161,27 @@ tech=11
 		case 12: technode =  1; break; 
 	} 
 
-// 1.4 update: new wire width
+// 1.4 update: new wire width, barrierthickness
+
 
 	switch (technode){
-		case 130: 	Metal0 = 175; Metal1 = 175; wireWidth = 175; featuresize = wireWidth*1e-9; break;  
-		case 90: 	Metal0 = 110; Metal1 = 110; wireWidth=110; featuresize = wireWidth*1e-9; break;  
-		case 65:	Metal0 = 105; Metal1 = 105; wireWidth=105; featuresize = wireWidth*1e-9; break;  
-		case 45:	Metal0 = 80; Metal1 = 80; wireWidth=80; featuresize = wireWidth*1e-9; break;  
-		case 32:	Metal0 = 56; Metal1 = 56; wireWidth=56; featuresize = wireWidth*1e-9; break;  
-		case 22:	Metal0 = 40; Metal1 = 40; wireWidth=40; featuresize = wireWidth*1e-9; break; 
-		case 14:	Metal0 = 32; Metal1 = 39; wireWidth=32; featuresize = wireWidth*1e-9; break;  
-		case 10:	Metal0 = 22; Metal1 = 32; wireWidth=22; featuresize = wireWidth*1e-9; break;  
-		case 7:		Metal0 = 20; Metal1 = 28.5; wireWidth=20; featuresize = wireWidth*1e-9; break;  
-		case 5:		Metal0 = 15; Metal1 = 17; wireWidth=15; featuresize = wireWidth*1e-9; break;  
-		case 3:		Metal0 = 12; Metal1 = 16; wireWidth=12; featuresize = wireWidth*1e-9; break; 
-		case 2:		Metal0 = 10; Metal1 = 11.5; wireWidth=10; featuresize = wireWidth*1e-9; break;  
-		case 1:		Metal0 = 8; Metal1 = 10; wireWidth=8; featuresize = wireWidth*1e-9; break;  
+		case 130: 	Metal0 = 175; Metal1 = 175; wireWidth = 175; barrierthickness = 10.0e-9 ; featuresize = wireWidth*1e-9; break;  
+		case 90: 	Metal0 = 110; Metal1 = 110; wireWidth=110; barrierthickness = 10.0e-9 ; featuresize = wireWidth*1e-9; break;  
+		case 65:	Metal0 = 105; Metal1 = 105; wireWidth=105; barrierthickness = 7.0e-9 ; featuresize = wireWidth*1e-9; break;  
+		case 45:	Metal0 = 80; Metal1 = 80; wireWidth=80; barrierthickness = 5.0e-9 ; featuresize = wireWidth*1e-9; break;  
+		case 32:	Metal0 = 56; Metal1 = 56; wireWidth=56; barrierthickness = 4.0e-9 ; featuresize = wireWidth*1e-9; break;  
+		case 22:	Metal0 = 40; Metal1 = 40; wireWidth=40; barrierthickness = 2.5e-9 ; featuresize = wireWidth*1e-9; break; 
+		case 14:	Metal0 = 32; Metal1 = 39; wireWidth=32; barrierthickness = 2.5e-9 ; featuresize = wireWidth*1e-9; break;  
+		case 10:	Metal0 = 22; Metal1 = 32; wireWidth=22; barrierthickness = 2.0e-9 ; featuresize = wireWidth*1e-9; break;  
+		case 7:		Metal0 = 20; Metal1 = 28.5; wireWidth=20; barrierthickness = 2.0e-9 ; featuresize = wireWidth*1e-9; break;  
+		case 5:		Metal0 = 15; Metal1 = 17; wireWidth=15; barrierthickness = 2.0e-9 ; featuresize = wireWidth*1e-9; break;  
+		case 3:		Metal0 = 12; Metal1 = 16; wireWidth=12; barrierthickness = 1.5e-9 ; featuresize = wireWidth*1e-9; break; 
+		case 2:		Metal0 = 10; Metal1 = 11.5; wireWidth=10; barrierthickness = 0.5e-9 ; featuresize = wireWidth*1e-9; break;  
+		case 1:		Metal0 = 8; Metal1 = 10; wireWidth=8; barrierthickness = 0.2e-9 ; featuresize = wireWidth*1e-9; break;  
 		case -1:	break;	
 		default:	exit(-1); puts("Wire width out of range"); 
 	}
+	
 	
 
 	globalBusDelayTolerance = 0.1;      // to relax bus delay for global H-Tree (chip level: communication among tiles), if tolerance is 0.1, the latency will be relax to (1+0.1)*optimalLatency (trade-off with energy)
@@ -352,6 +354,7 @@ tech=11
 	/*** Initialize interconnect wires ***/
 
 	// 1.4 update: wirewidth
+	// wirewidth
 	if (wireWidth >= 175) {
 		AR = 1.6; 
 		Rho = 2.01*1e-8;
@@ -390,7 +393,9 @@ tech=11
 		exit(-1); puts("Wire width out of range"); 
 	}
 
-	// 1.4 update: Metal0
+	Rho = Rho * 1 / (1- ( (2*AR*wireWidth + wireWidth)*barrierthickness / (AR*pow(wireWidth,2) ) ));
+	
+	// Metal0
 	if (Metal0 >= 175) {
 		AR_Metal0 = 1.6; 
 		Rho_Metal0 = 2.01*1e-8;
@@ -428,8 +433,11 @@ tech=11
 	} else {
 		exit(-1); puts("Wire width out of range"); 
 	}
+
+	Rho_Metal0 = Rho_Metal0 * 1 / (1- ( (2*AR_Metal0*Metal0 + Metal0)*barrierthickness / (AR_Metal0*pow(Metal0,2) ) ));
+
 	
-	// 1.4 update: Metal1
+	// Metal1
 	if (Metal1 >= 175) {
 		AR_Metal1 = 1.6; 
 		Rho_Metal1 = 2.01*1e-8;
@@ -467,6 +475,9 @@ tech=11
 	} else {
 		exit(-1); puts("Wire width out of range"); 
 	}
+
+	Rho_Metal1 = Rho_Metal1 * 1 / (1- ( (2*AR_Metal1*Metal1 + Metal1)*barrierthickness / (AR_Metal1*pow(Metal1,2) ) ));
+
 
 
 	Metal0_unitwireresis =  Rho_Metal0 / ( Metal0*1e-9 * Metal0*1e-9 * AR_Metal0 );
