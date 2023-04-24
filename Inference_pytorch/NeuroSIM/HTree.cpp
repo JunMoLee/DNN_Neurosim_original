@@ -188,7 +188,7 @@ void HTree::CalculateLatency(int x_init, int y_init, int x_end, int y_end, doubl
 		double wireLengthV = unitHeight*pow(2, (numStage-1)/2);   // first vertical stage
 		double wireLengthH = unitWidth*pow(2, (numStage-1)/2);    // first horizontal stage (despite of main bus)
 		double numRepeater = 0;
-		double resOnRep = CalculateOnResistance(widthInvN, NMOS, inputParameter.temperature, tech) + CalculateOnResistance(widthInvP, PMOS, inputParameter.temperature, tech);
+		double resOnRep = (CalculateOnResistance(widthInvN, NMOS, inputParameter.temperature, tech) + CalculateOnResistance(widthInvP, PMOS, inputParameter.temperature, tech))/2;
 		
 		if (((!x_init) && (!y_init)) || ((!x_end) && (!y_end))) {      // root-leaf communicate (fixed addr)
 			for (int i=0; i<(numStage-1)/2; i++) {                     // ignore main bus here, but need to count until last stage (diff from area calculation)
@@ -197,7 +197,7 @@ void HTree::CalculateLatency(int x_init, int y_init, int x_end, int y_end, doubl
 				/*** vertical stage ***/
 				wireLengthV /= 2;   // wire length /2 
 				wireWidth, unitLengthWireResistance = GetUnitLengthRes(wireLengthV);
-				unitLatencyRep = 0.7*(resOnRep*(capInvInput+capInvOutput+unitLengthWireCap*minDist)+0.5*unitLengthWireResistance*minDist*unitLengthWireCap*minDist+unitLengthWireResistance*minDist*capInvInput)/minDist;
+				unitLatencyRep = 0.7*(resOnRep*(capInvInput+capInvOutput+unitLengthWireCap*minDist)+0.38*unitLengthWireResistance*minDist*unitLengthWireCap*minDist+unitLengthWireResistance*minDist*capInvInput)/minDist;
 				unitLatencyWire = 0.7*unitLengthWireResistance*minDist*unitLengthWireCap*minDist/minDist;
 				numRepeater = ceil(wireLengthV/minDist);
 				if (numRepeater > 0) {
@@ -209,7 +209,7 @@ void HTree::CalculateLatency(int x_init, int y_init, int x_end, int y_end, doubl
 				/*** horizontal stage ***/
 				wireLengthH /= 2;   // wire length /2 
 				wireWidth, unitLengthWireResistance = GetUnitLengthRes(wireLengthH);
-				unitLatencyRep = 0.7*(resOnRep*(capInvInput+capInvOutput+unitLengthWireCap*minDist)+0.5*unitLengthWireResistance*minDist*unitLengthWireCap*minDist+unitLengthWireResistance*minDist*capInvInput)/minDist;
+				unitLatencyRep = 0.7*(resOnRep*(capInvInput+capInvOutput+unitLengthWireCap*minDist)+0.38*unitLengthWireResistance*minDist*unitLengthWireCap*minDist+unitLengthWireResistance*minDist*capInvInput)/minDist;
 				unitLatencyWire = 0.7*unitLengthWireResistance*minDist*unitLengthWireCap*minDist/minDist;
 				numRepeater = ceil(wireLengthH/minDist);
 				if (numRepeater > 0) {
@@ -273,7 +273,7 @@ void HTree::CalculateLatency(int x_init, int y_init, int x_end, int y_end, doubl
 				/*** vertical stage ***/
 				wireLengthV /= 2;   // wire length /2 
 				wireWidth, unitLengthWireResistance = GetUnitLengthRes(wireLengthV);
-				unitLatencyRep = 0.7*(resOnRep*(capInvInput+capInvOutput+unitLengthWireCap*minDist)+0.5*unitLengthWireResistance*minDist*unitLengthWireCap*minDist+unitLengthWireResistance*minDist*capInvInput)/minDist;
+				unitLatencyRep = 0.7*(resOnRep*(capInvInput+capInvOutput+unitLengthWireCap*minDist)+0.38*unitLengthWireResistance*minDist*unitLengthWireCap*minDist+unitLengthWireResistance*minDist*capInvInput)/minDist;
 				unitLatencyWire = 0.7*unitLengthWireResistance*minDist*unitLengthWireCap*minDist/minDist;
 				numRepeater = ceil(wireLengthV/minDist);
 				if (numRepeater > 0) {
@@ -284,7 +284,7 @@ void HTree::CalculateLatency(int x_init, int y_init, int x_end, int y_end, doubl
 				/*** horizontal stage ***/
 				wireLengthH /= 2;   // wire length /2 
 				wireWidth, unitLengthWireResistance = GetUnitLengthRes(wireLengthH);
-				unitLatencyRep = 0.7*(resOnRep*(capInvInput+capInvOutput+unitLengthWireCap*minDist)+0.5*unitLengthWireResistance*minDist*unitLengthWireCap*minDist+unitLengthWireResistance*minDist*capInvInput)/minDist;
+				unitLatencyRep = 0.7*(resOnRep*(capInvInput+capInvOutput+unitLengthWireCap*minDist)+0.38*unitLengthWireResistance*minDist*unitLengthWireCap*minDist+unitLengthWireResistance*minDist*capInvInput)/minDist;
 				unitLatencyWire = 0.7*unitLengthWireResistance*minDist*unitLengthWireCap*minDist/minDist;
 				numRepeater = ceil(wireLengthH/minDist);
 				if (numRepeater > 0) {

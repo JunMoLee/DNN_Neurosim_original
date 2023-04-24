@@ -163,6 +163,10 @@ public:
 	bool trainingEstimation, parallelTrans;
 	int levelOutputTrans, numRowMuxedTrans, numReadPulseTrans;
 
+	// 1.4 update : parameters for buffer insertion
+	double widthInvN, widthInvP;
+	double wInv, hInv, drivecapin, drivecapout, sectionres, targetdriveres;
+
 	/* Circuit Modules */
 	LevelShifter			 wllevelshifter;
 	LevelShifter			 sllevelshifter;

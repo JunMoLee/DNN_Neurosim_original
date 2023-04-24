@@ -47,6 +47,12 @@
 #include "formula.h"
 #include "NewSwitchMatrix.h"
 
+// 1.4 update : include Param.h
+#include "Param.h" 
+
+// 1.4 update : include Param.h
+extern Param *param;
+
 using namespace std;
 
 NewSwitchMatrix::NewSwitchMatrix(const InputParameter& _inputParameter, const Technology& _tech, const MemCell& _cell): inputParameter(_inputParameter), tech(_tech), cell(_cell), dff(_inputParameter, _tech, _cell), FunctionUnit() {
@@ -68,9 +74,12 @@ void NewSwitchMatrix::Initialize(int _numOutput, double _activityRowRead, double
     
 	// DFF
 	dff.Initialize(numOutput, clkFreq); 
-	widthTgN = MIN_NMOS_SIZE * tech.featureSize;
-	widthTgP = tech.pnSizeRatio * MIN_NMOS_SIZE * tech.featureSize;
-	EnlargeSize(&widthTgN, &widthTgP, tech.featureSize*MAX_TRANSISTOR_HEIGHT, tech);
+
+	// 1.4 update: allow width tuning
+	widthTgN = MIN_NMOS_SIZE * tech.featureSize * param->newswitchmatrixsizeratio;
+	widthTgP = tech.pnSizeRatio * MIN_NMOS_SIZE * tech.featureSize* param->newswitchmatrixsizeratio;
+	
+	// EnlargeSize(&widthTgN, &widthTgP, tech.featureSize*MAX_TRANSISTOR_HEIGHT, tech);
 
 	// 1.4 update
 	resTg = 1/(1/CalculateOnResistance_normal(widthTgN, NMOS, inputParameter.temperature, tech) + 1/CalculateOnResistance_normal(widthTgP, NMOS, inputParameter.temperature, tech));

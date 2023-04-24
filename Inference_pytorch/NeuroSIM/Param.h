@@ -96,8 +96,20 @@ public:
 	double sizingfactor_MUX= 1; 
 	double sizingfactor_WLdecoder= 1; 
 
+	// 1.4 update: switchmatrix parameter tuning
+
+	double newswitchmatrixsizeratio=6;
+	double switchmatrixsizeratio=1;
+
 	// 1.4 update: Special layout
 	double speciallayout;
+
+	// 1.4 update: added parameters for buffer insertion
+	double unitcap;
+	double unitres;
+	double drivecapin; 
+	double buffernumber=0;
+	double buffersizeratio=0;
 
 	// 1.4 update: barrier thickness
 	double barrierthickness= 0;

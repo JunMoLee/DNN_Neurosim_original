@@ -42,6 +42,12 @@
 #include "formula.h"
 #include "SwitchMatrix.h"
 
+// 1.4 update : include Param.h
+#include "Param.h" 
+
+// 1.4 update : include Param.h
+extern Param *param;
+
 using namespace std;
 
 SwitchMatrix::SwitchMatrix(const InputParameter& _inputParameter, const Technology& _tech, const MemCell& _cell): inputParameter(_inputParameter), tech(_tech), cell(_cell), dff(_inputParameter, _tech, _cell), FunctionUnit() {
@@ -67,7 +73,9 @@ void SwitchMatrix::Initialize(int _mode, int _numOutput, double _resTg, bool _ne
 	dff.Initialize(numOutput, clkFreq);       // used for scan-in ...
 	
 	// TG  resTg = cell.resMemCellOn / numLoad * IR_DROP_TOLERANCE;
-	resTg = _resTg * IR_DROP_TOLERANCE;      // given actual TG resistance
+
+	// 1.4 update: allow resTg tuning
+	resTg = _resTg * param->switchmatrixsizeratio;      // given actual TG resistance
 	
 	// Why use pre-defined resTg? Becasue we want to define TG resistance according to loading and performance ...
 	
@@ -242,10 +250,28 @@ void SwitchMatrix::CalculateLatency(double _rampInput, double _capLoad, double _
 
 		capOutput = capTgDrain * 4 + capTgGateN*0.5 + capTgGateP*0.5 ;
 
-		// 1.4 update: resTg. 
+		// 1.4 update: resTg, buffer latency model for switch matrix (propagation delay for distributed RC)
 		// eq resistance (rn//rp) stays the same regardless of the biasing in transmission gate. So we take ron,n // ron,p which is the resistance at the onset
-		tr = resTg * (capOutput + capLoad) + resLoad * capLoad / 2;
-		readLatency += horowitz(tr, 0, rampInput, &rampOutput);	// get from chargeLatency in the original SubArray.cpp
+		
+		double sectionnum = param->numColSubArray/(param->buffernumber+1);
+
+		if (param->buffernumber ==0){
+
+			tr =  resTg * (capOutput) * 0.69 
+			+ param->unitcap * sectionnum * (0.69*resTg + 0.38*param->unitres*sectionnum);					
+		
+		}
+		
+		else {
+
+			tr =  resTg * (capOutput) * 0.69 
+			+ param->unitcap *  sectionnum * (0.69*resTg + 0.38*param->unitres*sectionnum)
+			+ (param->unitcap * sectionnum * 0.69 + 0.69 * resTg) * param-> drivecapin;
+		
+		}
+
+		readLatency += tr;
+		// readLatency += horowitz(tr, 0, rampInput, &rampOutput);	// we do not use horitz model here 
 		
 		readLatency *= numRead;
 		// readLatency += dff.readLatency;

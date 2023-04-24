@@ -55,7 +55,7 @@ using namespace std;
 
 Param::Param() {
 	/***************************************** user defined design options and parameters *****************************************/
-	operationmode = 1;     		// 1: conventionalSequential (Use several multi-bit RRAM as one synapse)
+	operationmode = 2;     		// 1: conventionalSequential (Use several multi-bit RRAM as one synapse)
 								// 2: conventionalParallel (Use several multi-bit RRAM as one synapse)
 	
 	memcelltype = 1;        	// 1: cell.memCellType = Type::SRAM
@@ -138,9 +138,17 @@ Param::Param() {
 	sizingfactor_MUX=1; // sizing for the final driver of mux in rowdecoder.cpp (important for technology scaling)
 	sizingfactor_WLdecoder=1; // sizing for the final driver of WLdecoder in rowdecoder.cpp (important for technology scaling)
 
+	// 1.4 update: switchmatrix parameter tuning
+	newswitchmatrixsizeratio=6;
+	switchmatrixsizeratio=0.1;
+
+	// 1.4 update: buffer parameters : change it if you have to insert buffers
+	buffernumber=0;
+	buffersizeratio=0;
+
 // For Linux Automation (test for 1.4 update)
 const int 
-tech=11
+tech=13
 ;
 
 	// 1.4 update: new technology node added
@@ -231,7 +239,7 @@ tech=11
 	
 	// 1.4 update: handle the exception for conventionalsequential case
 
-	if (conventionalSequential == 1)
+	if ((conventionalSequential == 1) && (memcelltype = 1))
 	{
 	numColMuxed=numColPerSynapse;
 	}

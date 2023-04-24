@@ -110,7 +110,7 @@ int main(int argc, char * argv[]) {
 	
 
 	// 1.4 update : Implementation for conventional sequential 
-	if (param->conventionalSequential == 1)
+	if ((param->conventionalSequential == 1) && (param->memcelltype = 1))
 	{
 	param->numColMuxed = param->numColPerSynapse;
 	}

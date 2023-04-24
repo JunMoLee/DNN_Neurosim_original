@@ -434,8 +434,6 @@ void RowDecoder::CalculateLatency(double _rampInput, double _capLoad1, double _c
 
 			// 1.4 update : resisitve load at the output is considered
 			tr = resPullUp * (capDriverInvOutput + capLoad1) + (resLoad * (capLoad1 + capLoad1/colnum))/2;
-
-			tr = resPullUp * (capDriverInvOutput + capLoad1);
 			gm = CalculateTransconductance(widthDriverInvP, PMOS, tech);
 			beta = 1 / (resPullUp * gm);
 			readLatency += horowitz(tr, beta, rampInvOutput, &rampOutput);

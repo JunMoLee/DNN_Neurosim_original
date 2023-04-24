@@ -15,14 +15,15 @@ formula.o: formula.cpp constant.h formula.h Technology.h typedef.h \
 DFF.o: DFF.cpp constant.h formula.h Technology.h typedef.h Param.h DFF.h \
  InputParameter.h MemCell.h FunctionUnit.h
 SwitchMatrix.o: SwitchMatrix.cpp constant.h formula.h Technology.h \
- typedef.h SwitchMatrix.h InputParameter.h MemCell.h FunctionUnit.h DFF.h
+ typedef.h SwitchMatrix.h InputParameter.h MemCell.h FunctionUnit.h DFF.h \
+ Param.h
 Technology.o: Technology.cpp Technology.h typedef.h
 CurrentSenseAmp.o: CurrentSenseAmp.cpp constant.h formula.h Technology.h \
  typedef.h Param.h CurrentSenseAmp.h FunctionUnit.h InputParameter.h \
  MemCell.h
 NewSwitchMatrix.o: NewSwitchMatrix.cpp constant.h formula.h Technology.h \
  typedef.h NewSwitchMatrix.h FunctionUnit.h InputParameter.h MemCell.h \
- DFF.h
+ DFF.h Param.h
 WLNewDecoderDriver.o: WLNewDecoderDriver.cpp constant.h formula.h \
  Technology.h typedef.h Param.h WLNewDecoderDriver.h FunctionUnit.h \
  InputParameter.h MemCell.h
